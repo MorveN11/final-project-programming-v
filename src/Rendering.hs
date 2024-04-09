@@ -2,7 +2,7 @@
 
 module Rendering (viewModel) where
 
-import qualified Data.Map.Strict as Map
+import Data.Map (fromList)
 import Game (Action (..), Model (..), Tile (..))
 import Miso (View, button_, div_, onClick, style_, text)
 import Miso.String (ms)
@@ -13,7 +13,7 @@ viewModel Model {board, score} =
     []
     [ div_
         [ style_ $
-            Map.fromList
+            fromList
               [ (ms "display", ms "grid"),
                 (ms "grid-template-columns", ms "repeat(4, 1fr)"),
                 (ms "grid-gap", ms "10px"),
@@ -27,7 +27,7 @@ viewModel Model {board, score} =
         (map viewTile (concat board)),
       div_
         [ style_ $
-            Map.fromList
+            fromList
               [ (ms "text-align", ms "center"),
                 (ms "font-size", ms "24px"),
                 (ms "margin-top", ms "20px")
@@ -36,7 +36,7 @@ viewModel Model {board, score} =
         [text $ ms ("Score: " ++ show score)],
       div_
         [ style_ $
-            Map.fromList
+            fromList
               [ (ms "display", ms "flex"),
                 (ms "justify-content", ms "center"),
                 (ms "margin-top", ms "20px")
@@ -53,7 +53,7 @@ viewTile :: Tile -> View Action
 viewTile Empty =
   div_
     [ style_ $
-        Map.fromList
+        fromList
           [ (ms "background-color", ms "#cdc1b4"),
             (ms "border-radius", ms "3px"),
             (ms "width", ms "90px"),
@@ -69,7 +69,7 @@ viewTile Empty =
 viewTile (Tile n) =
   div_
     [ style_ $
-        Map.fromList
+        fromList
           [ (ms "background-color", ms "#eee4da"),
             (ms "border-radius", ms "3px"),
             (ms "width", ms "90px"),
