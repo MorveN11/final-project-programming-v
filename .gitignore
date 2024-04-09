@@ -2,4 +2,5 @@
 *~
 dist-newstyle/
 stack.yaml.lock
-result
+.env
+result/
