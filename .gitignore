@@ -3,3 +3,5 @@
 dist-newstyle/
 stack.yaml.lock
 result
+node_modules
+.env
