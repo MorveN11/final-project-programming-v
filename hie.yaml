@@ -1,0 +1,10 @@
+cradle:
+  stack:
+    - path: "./src"
+      component: "final-project-programming-v:lib"
+
+    - path: "./web/Main.hs"
+      component: "final-project-programming-v:exe:final-project-programming-v-exe"
+
+    - path: "./test"
+      component: "final-project-programming-v:test:final-project-programming-v-test"

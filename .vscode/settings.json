@@ -4,4 +4,8 @@
     "stack.yaml": "stack.yaml, stack.yaml.lock, hie.yaml",
     ".gitignore": ".gitignore, .gitattributes",
   },
+  "cSpell.words": [
+    "Devs",
+    "ghcjs"
+  ],
 }
