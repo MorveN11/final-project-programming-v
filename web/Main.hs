@@ -2,7 +2,7 @@
 
 module Main (main) where
 
-import Game (Action (Initialize), initialModel)
+import Game (Action (Initialize), gameSubs, initialModel)
 import Logic (updateModel)
 import Miso
   ( App
@@ -30,6 +30,6 @@ main = startApp App {..}
     update = updateModel
     view = viewModel
     events = defaultEvents
-    subs = []
+    subs = gameSubs
     mountPoint = Nothing
     logLevel = Off

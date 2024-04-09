@@ -47,6 +47,7 @@ library
     Game
     Logic
     Rendering
+    Utils
 
   hs-source-dirs:  src
 

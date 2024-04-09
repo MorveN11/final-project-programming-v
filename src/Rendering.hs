@@ -1,14 +1,14 @@
-{-# LANGUAGE NamedFieldPuns #-}
+{-# LANGUAGE RecordWildCards #-}
 
 module Rendering (viewModel) where
 
 import Data.Map (fromList)
 import Game (Action (..), Model (..), Tile (..))
-import Miso (View, button_, div_, onClick, style_, text)
+import Miso (View, div_, style_, text)
 import Miso.String (ms)
 
 viewModel :: Model -> View Action
-viewModel Model {board, score} =
+viewModel Model {..} =
   div_
     []
     [ div_
@@ -33,20 +33,7 @@ viewModel Model {board, score} =
                 (ms "margin-top", ms "20px")
               ]
         ]
-        [text $ ms ("Score: " ++ show score)],
-      div_
-        [ style_ $
-            fromList
-              [ (ms "display", ms "flex"),
-                (ms "justify-content", ms "center"),
-                (ms "margin-top", ms "20px")
-              ]
-        ]
-        [ button_ [onClick MoveUp] [text $ ms "Up"],
-          button_ [onClick MoveDown] [text $ ms "Down"],
-          button_ [onClick MoveLeft] [text $ ms "Left"],
-          button_ [onClick MoveRight] [text $ ms "Right"]
-        ]
+        [text $ ms ("Score: " ++ show score)]
     ]
 
 viewTile :: Tile -> View Action
