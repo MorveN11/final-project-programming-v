@@ -1,15 +1,11 @@
 {-# LANGUAGE RecordWildCards #-}
-module Rendering (viewModel, updateModel) where
-import Logic (move)
-import Game (Action (..), Board, Model (..), Tile (..))
-import Miso (Effect, View, button_, div_,  noEff, onClick, style_, text)
-import Miso.String (ms)
-import qualified Data.Map as Map
-import Miso.Subscription.Keyboard (Arrows(..))
-updateModel :: Action -> Model -> Effect Action Model
-updateModel Initialize m = noEff m
-updateModel (ArrowPress  Arrows{..}) Model{..}= noEff (Model {board = move (arrowX,arrowY) board,..})
 
+module Rendering (viewModel) where
+
+import Data.Map (fromList)
+import Game (Action (..), Model (..), Tile (..))
+import Miso (View, div_, style_, text)
+import Miso.String (ms)
 
 viewModel :: Model -> View Action
 viewModel Model {..} =
@@ -37,24 +33,7 @@ viewModel Model {..} =
                 (ms "margin-top", ms "20px")
               ]
         ]
-<<<<<<< HEAD
-        [text $ ms ("Score: " ++ show score)],
-      div_
-        [ style_ $
-            fromList
-              [ (ms "display", ms "flex"),
-                (ms "justify-content", ms "center"),
-                (ms "margin-top", ms "20px")
-              ]
-        ]
-        [ button_ [onClick MoveUp] [text $ ms "Up"],
-          button_ [onClick MoveDown] [text $ ms "Down"],
-          button_ [onClick MoveLeft] [text $ ms "Left"],
-          button_ [onClick MoveRight] [text $ ms "Right"]
-        ]
-=======
-        [text $ "Score: " <> ms (show score)]
->>>>>>> 8b065fd (movements with arrow keys have been added)
+        [text $ ms ("Score: " ++ show score)]
     ]
 
 viewTile :: Tile -> View Action
@@ -73,11 +52,7 @@ viewTile Empty =
             (ms "color", ms "#cdc1b4")
           ]
     ]
-<<<<<<< HEAD
     [text $ ms ""]
-=======
-    [text (ms "")]
->>>>>>> 8b065fd (movements with arrow keys have been added)
 viewTile (Tile n) =
   div_
     [ style_ $

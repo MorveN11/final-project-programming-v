@@ -33,7 +33,6 @@ common configuration
     , base        >=4.7 && <5
     , containers
     , miso
-    ,containers
 
   default-language: Haskell2010
 
@@ -48,6 +47,7 @@ library
     Game
     Logic
     Rendering
+    Utils
 
   hs-source-dirs:  src
 
