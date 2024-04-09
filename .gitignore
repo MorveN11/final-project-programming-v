@@ -2,6 +2,5 @@
 *~
 dist-newstyle/
 stack.yaml.lock
-node_modules
 .env
 result/
