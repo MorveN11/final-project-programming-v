@@ -1,0 +1,7 @@
+{
+  "explorer.fileNesting.enabled": true,
+  "explorer.fileNesting.patterns": {
+    "stack.yaml": "stack.yaml, stack.yaml.lock, hie.yaml",
+    ".gitignore": ".gitignore, .gitattributes",
+  },
+}

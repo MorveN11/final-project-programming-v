@@ -1,0 +1,8 @@
+# Haskell files
+*.hs linguist-language=Haskell
+
+# Linux shell scripts
+*.sh linguist-language=Shell
+
+# All files use LF line endings
+* text eol=lf
