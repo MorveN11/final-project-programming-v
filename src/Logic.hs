@@ -1,11 +1,16 @@
-module Logic (updateModel) where
+module Logic (move) where
 
-import Game (Action (..), Model ())
-import Miso (Effect, noEff)
+import Game (Tile(..))
+import Data.List (partition)
+import Utils (transpose)
 
-updateModel :: Action -> Model -> Effect Action Model
-updateModel Initialize m = noEff m
-updateModel MoveUp m = noEff m
-updateModel MoveDown m = noEff m
-updateModel MoveLeft m = noEff m
-updateModel MoveRight m = noEff m
+move :: (Int , Int)-> [[Tile]] -> [[Tile]]
+move (x,y)  boardGame | x == 0  && y == 0 = boardGame
+                      | x == 0 =  transpose (map (move' (y*(-1))) (transpose boardGame))
+                      | otherwise = map (move' x) boardGame
+
+move' :: Int -> [Tile] -> [Tile]
+move'  n list  | n<0 = tiles ++ empties
+                         | otherwise = empties++tiles
+                         where
+                            (empties,tiles) = partition (==Empty) list

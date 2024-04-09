@@ -33,6 +33,7 @@ common configuration
     , base        >=4.7 && <5
     , containers
     , miso
+    ,containers
 
   default-language: Haskell2010
 
