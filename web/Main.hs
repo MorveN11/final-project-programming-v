@@ -1,8 +1,26 @@
-module Main where
+{-# LANGUAGE RecordWildCards #-}
 
-import Game (initialModel)
+module Main (main) where
+
+import Game (Action (Initialize), initialModel)
+import Logic (updateModel)
 import Miso
-import Rendering (updateModel, viewModel)
+  ( App
+      ( App,
+        events,
+        initialAction,
+        logLevel,
+        model,
+        mountPoint,
+        subs,
+        update,
+        view
+      ),
+    LogLevel (Off),
+    defaultEvents,
+    startApp,
+  )
+import Rendering (viewModel)
 
 main :: IO ()
 main = startApp App {..}

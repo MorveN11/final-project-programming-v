@@ -30,7 +30,8 @@ common configuration
     -haddock
 
   build-depends:
-    , base  >=4.7 && <5
+    , base        >=4.7 && <5
+    , containers
     , miso
 
   default-language: Haskell2010

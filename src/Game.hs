@@ -2,7 +2,7 @@
 
 module Game (Tile (..), Board, Model (..), Action (..), initialModel) where
 
-import Constants (size, initialScore)
+import Constants (initialScore, size)
 
 data Tile
   = Empty
