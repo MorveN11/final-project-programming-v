@@ -25,6 +25,10 @@ initBoard board  | length (getIndexOfEmpties board) == tilesAmount  = initBoard 
                  |otherwise = updateTile board (findAvailableTileIndex board) initialAmountValue
 
 
+getIndexOfEmpties :: Board -> [Int]
+getIndexOfEmpties grid = [i | (i, x) <- zip [0 ..] (concat grid), x == Empty]
+
+
 addRandomTile :: Board -> Board
 addRandomTile board =  updateTile board index value
   where
@@ -43,10 +47,6 @@ updateTile grid index value =
   chop size (xs ++ [Tile value] ++ tail ys)
   where
     (xs, ys) = splitAt index (concat grid)
-
-
-getIndexOfEmpties :: Board -> [Int]
-getIndexOfEmpties grid = [i | (i, x) <- zip [0 ..] (concat grid), x == Empty]
 
 
 move :: (Int, Int) -> Board -> Board
