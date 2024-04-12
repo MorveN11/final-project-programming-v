@@ -2,7 +2,7 @@
 
 module Game (Tile (..), Board, Model (..), Action (..), initialModel, gameSubs) where
 
-import Constants (initialScore,size)
+import Constants (initialScore, size)
 import Miso.Subscription.Keyboard (Arrows (..), directionSub)
 import Miso.Types (Sub)
 

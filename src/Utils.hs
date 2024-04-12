@@ -1,6 +1,5 @@
 module Utils (transpose, getRandomInt, chop, getValueOfMatrixIndex, getValueOfVectorIndex) where
 
-import GHC.IO (unsafePerformIO)
 import System.Random (randomRIO)
 
 transpose :: [[a]] -> [[a]]
@@ -8,8 +7,8 @@ transpose [] = []
 transpose ([] : _) = []
 transpose rows = map head rows : transpose (map tail rows)
 
-getRandomInt :: (Int, Int) -> Int
-getRandomInt (i, e) = unsafePerformIO (randomRIO (i, e) :: IO Int)
+getRandomInt :: (Int, Int) -> IO Int
+getRandomInt (i, e) = randomRIO (i, e) :: IO Int
 
 chop :: Int -> [a] -> [[a]]
 chop _ [] = []
