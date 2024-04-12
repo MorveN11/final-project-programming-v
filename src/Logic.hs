@@ -1,38 +1,52 @@
 {-# LANGUAGE RecordWildCards #-}
 
-module Logic (updateModel, getIndexOfEmpties) where
+module Logic (updateModel, getIndexOfEmpties, addRandomTile) where
 
-import Constants (size, twoPercentChance)
+import Constants (size, tilesAmount, twoPercentChance)
 import Data.List (partition)
+import GHC.IO (unsafePerformIO)
 import Game (Action (..), Board, Model (..), Tile (..))
 import Miso (Effect, noEff)
 import Miso.Subscription.Keyboard (Arrows (..))
 import Utils (chop, getRandomInt, getValueOfVectorIndex, transpose)
+
+updateModel :: Action -> Model -> Effect Action Model
+updateModel Initialize Model {..} = noEff Model {board = initBoard board, ..}
+updateModel (ArrowPress Arrows {..}) Model {..} =
+  if board /= board'
+    then noEff (Model {board = addRandomTile board', ..})
+    else noEff (Model {..})
+  where
+    board' = move (arrowX, arrowY) board
+
+initBoard :: Board -> Board
+initBoard board
+  | length (getIndexOfEmpties board) == tilesAmount = initBoard (addRandomTile board)
+  | otherwise = addRandomTile board
+
+getIndexOfEmpties :: Board -> [Int]
+getIndexOfEmpties grid = [i | (i, x) <- zip [0 ..] (concat grid), x == Empty]
+
+addRandomTile :: Board -> Board
+addRandomTile board = unsafePerformIO $ do
+  probability <- getRandomInt (1, 10)
+  let value = if probability <= twoPercentChance then 2 else 4
+  return $ updateTile board index value
+  where
+    index = findAvailableTileIndex board
+
+findAvailableTileIndex :: Board -> Int
+findAvailableTileIndex grid = unsafePerformIO $ do
+  index <- getRandomInt (0, length empties - 1)
+  return $ getValueOfVectorIndex index empties
+  where
+    empties = getIndexOfEmpties grid
 
 updateTile :: Board -> Int -> Int -> Board
 updateTile grid index value =
   chop size (xs ++ [Tile value] ++ tail ys)
   where
     (xs, ys) = splitAt index (concat grid)
-
-getIndexOfEmpties :: Board -> [Int]
-getIndexOfEmpties grid = [i | (i, x) <- zip [0 ..] (concat grid), x == Empty]
-
-addRandomTile :: Model -> Model
-addRandomTile Model {..} = Model {board = updateTile board index value, ..}
-  where
-    empties = getIndexOfEmpties board
-    index = getValueOfVectorIndex (getRandomInt (0, length empties - 1)) empties
-    value = if getRandomInt (1, 10) <= twoPercentChance then 2 else 4
-
-updateModel :: Action -> Model -> Effect Action Model
-updateModel Initialize m = noEff m
-updateModel (ArrowPress Arrows {..}) Model {..} =
-  if board /= board'
-    then noEff (addRandomTile (Model {board = board', ..}))
-    else noEff (Model {..})
-  where
-    board' = move (arrowX, arrowY) board
 
 move :: (Int, Int) -> Board -> Board
 move (x, y) boardGame
