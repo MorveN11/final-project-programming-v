@@ -4,7 +4,7 @@ module Rendering (viewModel) where
 
 import Data.Map (fromList)
 import Game (Action (..), GameState (..), Model (..), Tile (..))
-import Miso (View, button_, div_, h1_, p_, span_, style_, text)
+import Miso (View, button_, div_, h1_, onClick, p_, span_, style_, text)
 import Miso.String (ms)
 
 viewModel :: Model -> View Action
@@ -98,9 +98,10 @@ viewModel Model {..} =
                 [ style_ $
                     fromList
                       [ (ms "background", ms "#bbada0"),
-                        (ms "padding", ms "5px 15px"),
+                        (ms "padding", ms "5px 5px"),
                         (ms "border-radius", ms "3px"),
-                        (ms "text-align", ms "center")
+                        (ms "text-align", ms "center"),
+                        (ms "width", ms "90px")
                       ]
                 ]
                 [ div_
@@ -126,9 +127,10 @@ viewModel Model {..} =
                 [ style_ $
                     fromList
                       [ (ms "background", ms "#bbada0"),
-                        (ms "padding", ms "5px 15px"),
+                        (ms "padding", ms "5px 5px"),
                         (ms "border-radius", ms "3px"),
-                        (ms "text-align", ms "center")
+                        (ms "text-align", ms "center"),
+                        (ms "width", ms "90px")
                       ]
                 ]
                 [ div_
@@ -148,7 +150,7 @@ viewModel Model {..} =
                             (ms "font-weight", ms "bold")
                           ]
                     ]
-                    [text $ ms "2048"]
+                    [text $ ms bestScore]
                 ]
             ],
           button_
@@ -163,7 +165,8 @@ viewModel Model {..} =
                     (ms "font-weight", ms "bold"),
                     (ms "cursor", ms "pointer"),
                     (ms "font-family", ms "Arial, sans-serif")
-                  ]
+                  ],
+              onClick Restart
             ]
             [text $ ms "New Game"]
         ]
