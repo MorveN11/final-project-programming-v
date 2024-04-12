@@ -2,8 +2,8 @@ code size summary per package:
 
 base:                    282897
 containers-0.6.0.1-BAqcfV1UBBeCIRjPbUYeSG:47606
-final-project-programming-v-0.1.0.0-Gx6JPeKtwCxLg6ccTUQ7Uz:48856
-ghc-prim:                22490
+final-project-programming-v-0.1.0.0-Gx6JPeKtwCxLg6ccTUQ7Uz:48504
+ghc-prim:                22468
 ghcjs-base-0.2.0.0-JozYZ7GHc7JEfhDrWZm3NT:44379
 ghcjs-prim-0.1.1.0-EXzjGVHQlAS2XAXcu0iCbS:3267
 integer-gmp:             2849
@@ -72,7 +72,7 @@ containers-0.6.0.1-BAqcfV1UBBeCIRjPbUYeSG
 final-project-programming-v-0.1.0.0-Gx6JPeKtwCxLg6ccTUQ7Uz
     Constants:                          4251
     Game:                               9916
-    Logic:                              32214
+    Logic:                              31862
     Rendering:                          2474
     Utils:                              1
 
@@ -81,7 +81,7 @@ ghc-prim
     GHC.Classes:                        451
     GHC.IntWord64:                      1747
     GHC.Tuple:                          292
-    GHC.Types:                          17556
+    GHC.Types:                          17534
 
 ghcjs-base-0.2.0.0-JozYZ7GHc7JEfhDrWZm3NT
     Data.JSString:                      390
@@ -124,5 +124,5 @@ time-1.8.0.2-3d3i5aGvKEfEHwUSNgliL4
 
 
 
-packed metadata: 245101
+packed metadata: 243864
 
