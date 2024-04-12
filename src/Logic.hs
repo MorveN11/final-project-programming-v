@@ -2,6 +2,7 @@
 
 module Logic (updateModel, getIndexOfEmpties, addRandomTile) where
 
+import Collision (collision)
 import Constants (size, tilesAmount, twoPercentChance)
 import Data.List (partition)
 import GHC.IO (unsafePerformIO)
@@ -13,11 +14,13 @@ import Utils (chop, getRandomInt, getValueOfVectorIndex, transpose)
 updateModel :: Action -> Model -> Effect Action Model
 updateModel Initialize Model {..} = noEff Model {board = initBoard board, ..}
 updateModel (ArrowPress Arrows {..}) Model {..} =
-  if board /= board'
-    then noEff (Model {board = addRandomTile board', ..})
-    else noEff (Model {..})
-  where
-    board' = move (arrowX, arrowY) board
+  let newBoard = move (arrowX, arrowY) board
+      finalBoard = collision newBoard (arrowX, arrowY)
+      updatedModel =
+        if board /= finalBoard
+          then Model {board = addRandomTile finalBoard, score = score}
+          else Model {board = finalBoard, score = score}
+   in noEff updatedModel
 
 initBoard :: Board -> Board
 initBoard board

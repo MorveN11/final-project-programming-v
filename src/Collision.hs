@@ -1,6 +1,6 @@
 module Collision (collision) where
 
-import Game ( Tile (..), Board )
+import Game (Board, Tile (..))
 import Utils (transpose)
 
 mayCollide :: Tile -> Tile -> Bool
@@ -10,6 +10,7 @@ mayCollide tile1 tile2
 
 collisionTiles :: Tile -> Tile -> Tile
 collisionTiles (Tile value1) (Tile value2) = Tile (value1 + value2)
+collisionTiles _ _ = Empty
 
 collision :: Board -> (Int, Int) -> Board
 collision board (positionX, positionY)
@@ -28,7 +29,7 @@ mergeRow [tile] = [tile]
 mergeRow (tile1 : tile2 : tiles)
   | mayCollide tile1 tile2 =
       let collisionedRow = collisionTiles tile1 tile2 : tiles
-      in collisionedRow
+       in collisionedRow
   | otherwise = tile1 : mergeRow (tile2 : tiles)
 
 fillRow :: [Tile] -> [Tile]
