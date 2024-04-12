@@ -1,5 +1,6 @@
 module Collision (collision) where
 
+import Constants (size)
 import Game (Board, Tile (..))
 import Utils (transpose)
 
@@ -33,4 +34,4 @@ mergeRow (tile1 : tile2 : tiles)
   | otherwise = tile1 : mergeRow (tile2 : tiles)
 
 fillRow :: [Tile] -> [Tile]
-fillRow tiles = if length tiles <= 4 then tiles ++ replicate (4 - length tiles) Empty else take 4 tiles
+fillRow tiles = if length tiles <= size then tiles ++ replicate (size - length tiles) Empty else take size tiles
