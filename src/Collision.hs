@@ -3,15 +3,6 @@ module Collision (collision) where
 import Game ( Tile (..), Board )
 import Utils (transpose)
 
-{-data Tile = Empty | Tile Int deriving (Show, Eq)
-
-type Board = [[Tile]]
-
-transpose :: [[a]] -> [[a]]
-transpose [] = []
-transpose ([] : _) = []
-transpose rows = map head rows : transpose (map tail rows)-}
-
 mayCollide :: Tile -> Tile -> Bool
 mayCollide tile1 tile2
   | tile1 == Empty || tile2 == Empty = False
@@ -21,14 +12,14 @@ collisionTiles :: Tile -> Tile -> Tile
 collisionTiles (Tile value1) (Tile value2) = Tile (value1 + value2)
 
 collision :: Board -> (Int, Int) -> Board
-collision board (x, y)
-  | x < 0 && abs x > length board = board
-  | y < 0 && abs y > length (head board) = board
-  | otherwise = case (x, y) of
-      (-1, 0) -> map (fillRow . mergeRow) board --izquierda
-      (1, 0) -> map (fillRow . reverse . mergeRow . reverse) board --derecha
-      (0, 1) -> transpose (map (fillRow . mergeRow) (transpose board)) --arriba
-      (0, -1) -> transpose (map (fillRow . reverse . mergeRow . reverse) (transpose board)) --abajo
+collision board (positionX, positionY)
+  | positionX < 0 && abs positionX > length board = board
+  | positionY < 0 && abs positionY > length (head board) = board
+  | otherwise = case (positionX, positionY) of
+      (-1, 0) -> map (fillRow . mergeRow . mergeRow) board
+      (1, 0) -> map (reverse . fillRow . mergeRow . mergeRow . reverse) board
+      (0, 1) -> transpose (map (fillRow . mergeRow . mergeRow) (transpose board))
+      (0, -1) -> transpose (map (reverse . fillRow . mergeRow . mergeRow . reverse) (transpose board))
       _ -> board
 
 mergeRow :: [Tile] -> [Tile]
