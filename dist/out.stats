@@ -1,34 +1,37 @@
 code size summary per package:
 
-base:                    269683
-containers-0.6.0.1-BAqcfV1UBBeCIRjPbUYeSG:47728
-final-project-programming-v-0.1.0.0-3s8Ldq3olHQDnK7cfZO3Mb:30240
-ghc-prim:                19925
-ghcjs-base-0.2.0.0-JozYZ7GHc7JEfhDrWZm3NT:44668
-ghcjs-prim-0.1.1.0-EXzjGVHQlAS2XAXcu0iCbS:3688
-integer-gmp:             2848
-main:                    1555
-miso-1.7.1.0-87bIyeTxzzwBbJBT7HouL7:43217
+base:                    282897
+containers-0.6.0.1-BAqcfV1UBBeCIRjPbUYeSG:47606
+final-project-programming-v-0.1.0.0-Gx6JPeKtwCxLg6ccTUQ7Uz:48856
+ghc-prim:                22490
+ghcjs-base-0.2.0.0-JozYZ7GHc7JEfhDrWZm3NT:44379
+ghcjs-prim-0.1.1.0-EXzjGVHQlAS2XAXcu0iCbS:3267
+integer-gmp:             2849
+main:                    57682
+miso-1.7.1.0-87bIyeTxzzwBbJBT7HouL7:52315
+random-1.1-GAiTrdKbvqXBKvSOZFfo82:1093
+time-1.8.0.2-3d3i5aGvKEfEHwUSNgliL4:3324
 
 
 code size per module:
 
 base
-    Control.Exception.Base:             702
-    Data.OldList:                       46062
-    Data.Typeable.Internal:             10360
+    Control.Exception.Base:             137
+    Data.Fixed:                         702
+    Data.OldList:                       45795
+    Data.Typeable.Internal:             10361
     Foreign.C.Error:                    873
     Foreign.Marshal.Alloc:              2779
     Foreign.Storable:                   2364
-    GHC.Arr:                            4177
-    GHC.Base:                           6235
-    GHC.Conc.Sync:                      143
+    GHC.Arr:                            3954
+    GHC.Base:                           6236
+    GHC.Conc.Sync:                      144
     GHC.Enum:                           132
     GHC.Err:                            7782
-    GHC.Exception:                      309
-    GHC.Exception.Type:                 5539
+    GHC.Exception:                      2635
+    GHC.Exception.Type:                 5419
     GHC.Fingerprint:                    546
-    GHC.Fingerprint.Type:               11290
+    GHC.Fingerprint.Type:               11111
     GHC.Foreign:                        585
     GHC.ForeignPtr:                     1705
     GHC.IO:                             737
@@ -39,76 +42,87 @@ base
     GHC.IO.Encoding.Failure:            1
     GHC.IO.Encoding.Types:              58448
     GHC.IO.Encoding.UTF8:               9586
-    GHC.IO.Exception:                   26625
+    GHC.IO.Exception:                   26313
     GHC.IO.FD:                          274
-    GHC.IO.Handle:                      5259
-    GHC.IO.Handle.FD:                   23932
+    GHC.IO.Handle:                      5127
+    GHC.IO.Handle.FD:                   23707
     GHC.IO.Handle.Internals:            1906
-    GHC.IO.Handle.Types:                373
-    GHC.Int:                            3204
+    GHC.IO.Handle.Types:                7401
+    GHC.Int:                            4861
     GHC.List:                           1
     GHC.MVar:                           113
     GHC.Maybe:                          113
-    GHC.Ptr:                            1
+    GHC.Ptr:                            2089
+    GHC.Real:                           1
     GHC.STRef:                          4364
     GHC.Show:                           4085
     GHC.Stack.CCS:                      488
     GHC.Stack.Types:                    9941
     GHC.TopHandler:                     1
-    GHC.Word:                           13498
+    GHC.Word:                           1128
+    System.CPUTime:                     304
+    System.CPUTime.Unsupported:         13498
     System.Posix.Internals:             3611
 
 containers-0.6.0.1-BAqcfV1UBBeCIRjPbUYeSG
     Data.Map.Internal:                  22491
-    Data.Sequence.Internal:             25236
+    Data.Sequence.Internal:             25114
     Data.Set.Internal:                  1
 
-final-project-programming-v-0.1.0.0-3s8Ldq3olHQDnK7cfZO3Mb
-    Constants:                          3429
-    Game:                               3299
-    Logic:                              22187
-    Rendering:                          1119
-    Utils:                              206
+final-project-programming-v-0.1.0.0-Gx6JPeKtwCxLg6ccTUQ7Uz
+    Constants:                          4251
+    Game:                               9916
+    Logic:                              32214
+    Rendering:                          2474
+    Utils:                              1
 
 ghc-prim
-    GHC.CString:                        1269
-    GHC.Classes:                        139
+    GHC.CString:                        2444
+    GHC.Classes:                        451
     GHC.IntWord64:                      1747
     GHC.Tuple:                          292
-    GHC.Types:                          16478
+    GHC.Types:                          17556
 
 ghcjs-base-0.2.0.0-JozYZ7GHc7JEfhDrWZm3NT
-    Data.JSString:                      109
-    Data.JSString.Internal.Type:        390
-    GHCJS.Foreign.Internal:             2905
+    Data.JSString:                      390
+    GHCJS.Foreign.Internal:             3129
     GHCJS.Marshal:                      1
-    GHCJS.Marshal.Internal:             289
+    GHCJS.Marshal.Internal:             1
     GHCJS.Marshal.Pure:                 1
     JavaScript.Array.Internal:          1056
-    JavaScript.Web.AnimationFrame:      39917
+    JavaScript.Web.AnimationFrame:      39801
 
 ghcjs-prim-0.1.1.0-EXzjGVHQlAS2XAXcu0iCbS
-    GHCJS.Prim:                         2905
+    GHCJS.Prim:                         2484
     GHCJS.Prim.Internal:                783
 
 integer-gmp
-    GHC.Integer.Type:                   2848
+    GHC.Integer.Type:                   2849
 
 main
-    Main:                               1555
+    Main:                               57682
 
 miso-1.7.1.0-87bIyeTxzzwBbJBT7HouL7
-    Miso:                               1908
+    Miso:                               1909
     Miso.Delegate:                      1789
     Miso.Diff:                          1
-    Miso.Effect:                        7623
+    Miso.Effect:                        7412
     Miso.Event.Types:                   264
-    Miso.FFI:                           150
-    Miso.Html.Element:                  18129
-    Miso.Html.Internal:                 11997
-    Miso.Subscription.Keyboard:         1356
+    Miso.FFI:                           752
+    Miso.Html.Element:                  18056
+    Miso.Html.Internal:                 12043
+    Miso.Subscription.Keyboard:         10089
+
+random-1.1-GAiTrdKbvqXBKvSOZFfo82
+    System.Random:                      1093
+
+time-1.8.0.2-3d3i5aGvKEfEHwUSNgliL4
+    Data.Time.Clock.Internal.CTimespec: 1
+    Data.Time.Clock.Internal.UTCTime:   703
+    Data.Time.Clock.POSIX:              1264
+    Data.Time.Clock.System:             1356
 
 
 
-packed metadata: 183992
+packed metadata: 245101
 
