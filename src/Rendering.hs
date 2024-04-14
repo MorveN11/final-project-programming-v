@@ -1,10 +1,9 @@
 {-# LANGUAGE RecordWildCards #-}
-
 module Rendering (viewModel) where
 
 import Data.Map (fromList)
-import Game (Action (..), Model (..), Tile (..))
-import Miso (View, button_, div_, h1_, p_, span_, style_, text)
+import Game (Action (..), Model (..), Tile (..), GameState(..))
+import Miso (View, div_, button_, h1_, p_, span_, style_, text)
 import Miso.String (ms)
 
 viewModel :: Model -> View Action
@@ -27,7 +26,8 @@ viewModel Model {..} =
                 (ms "padding", ms "10px"),
                 (ms "border-radius", ms "6px"),
                 (ms "width", ms "400px"),
-                (ms "margin-right", ms "40px")
+                (ms "margin-right", ms "40px"),
+                (ms "position", ms "relative")
               ]
         ]
         [ div_
@@ -39,7 +39,11 @@ viewModel Model {..} =
                     (ms "grid-gap", ms "10px")
                   ]
             ]
-            (map viewTile (concat board))
+            (map viewTile (concat board)),
+          case gameState of
+            Win -> viewOverlay "074003" "WIN :D"
+            GameOver -> viewOverlay  "C93716" "GAME OVER"
+            InProgress -> div_ [] []
         ],
       div_
         [ style_ $
@@ -162,6 +166,34 @@ viewModel Model {..} =
             ]
             [text $ ms "New Game"]
         ]
+    ]
+
+viewOverlay :: String -> String -> View Action
+viewOverlay color message =
+  div_
+    [ style_ $
+        fromList
+          [ (ms "position", ms "absolute"),
+            (ms "top", ms "0"),
+            (ms "left", ms "0"),
+            (ms "width", ms "100%"),
+            (ms "height", ms "100%"),
+            (ms "background", ms $ "#" ++ color ++ "A6"),
+            (ms "display", ms "flex"),
+            (ms "justify-content", ms "center"),
+            (ms "align-items", ms "center")
+          ]
+    ]
+    [ div_
+        [ style_ $
+            fromList
+              [ (ms "padding", ms "10px 20px"),
+                (ms "color", ms "#ffffff"),
+                (ms "font-size", ms "30px"),
+                (ms "font-weight", ms "bold")
+              ]
+        ]
+        [text $ ms message]
     ]
 
 viewTile :: Tile -> View Action
