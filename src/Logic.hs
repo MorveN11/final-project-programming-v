@@ -6,7 +6,7 @@ import Collision (collision)
 import Constants (size, tilesAmount, twoPercentChance)
 import Data.List (partition)
 import GHC.IO (unsafePerformIO)
-import Game (Action (..), Board, Model (..), Tile (..), GameState (..))
+import Game (Action (..), Board, GameState (..), Model (..), Tile (..))
 import Miso (Effect, noEff)
 import Miso.Subscription.Keyboard (Arrows (..))
 import Utils (chop, getRandomInt, getValueOfVectorIndex, transpose)
@@ -22,19 +22,17 @@ updateModel (ArrowPress Arrows {..}) Model {..} =
           else Model {board = finalBoard, score = score, gameState = checkGameState finalBoard}
    in noEff updatedModel
 
-
 checkGameState :: Board -> GameState
 checkGameState board
-  | any (any (== Tile 2048)) board = Win
-  | not (any (any (== Empty)) board) && not (canMerge board) = GameOver
+  | any (elem (Tile 2048)) board = Win
+  | not (any (elem Empty) board) && not (canMerge board) = GameOver
   | otherwise = InProgress
-
 
 canMerge :: Board -> Bool
 canMerge board = any canMergeRow board || any canMergeRow (transpose board)
 
 canMergeRow :: [Tile] -> Bool
-canMergeRow (x:y:xs) = x == y || canMergeRow (y:xs)
+canMergeRow (x : y : xs) = x == y || canMergeRow (y : xs)
 canMergeRow _ = False
 
 initBoard :: Board -> Board

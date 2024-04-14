@@ -1,9 +1,10 @@
 {-# LANGUAGE RecordWildCards #-}
+
 module Rendering (viewModel) where
 
 import Data.Map (fromList)
-import Game (Action (..), Model (..), Tile (..), GameState(..))
-import Miso (View, div_, button_, h1_, p_, span_, style_, text)
+import Game (Action (..), GameState (..), Model (..), Tile (..))
+import Miso (View, button_, div_, h1_, p_, span_, style_, text)
 import Miso.String (ms)
 
 viewModel :: Model -> View Action
@@ -42,7 +43,7 @@ viewModel Model {..} =
             (map viewTile (concat board)),
           case gameState of
             Win -> viewOverlay "074003" "WIN :D"
-            GameOver -> viewOverlay  "C93716" "GAME OVER"
+            GameOver -> viewOverlay "C93716" "GAME OVER"
             InProgress -> div_ [] []
         ],
       div_

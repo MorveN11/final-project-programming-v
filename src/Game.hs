@@ -42,9 +42,7 @@ demoBoardWin =
     [Tile 512, Tile 1024, Tile 1024, Empty],
     [Tile 1024, Tile 1024, Empty, Empty]
   ]
-
 -}
-
 
 emptyBoard :: Board
 emptyBoard = replicate size $ replicate size Empty
@@ -52,7 +50,7 @@ emptyBoard = replicate size $ replicate size Empty
 initialModel :: Model
 initialModel =
   Model
-    { board = emptyBoard, -- demoBoardWin,
+    { board = emptyBoard,
       score = initialScore,
       gameState = InProgress
     }
