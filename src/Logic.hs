@@ -22,11 +22,15 @@ updateModel (ArrowPress Arrows {..}) Model {..} =
   where
     board' = move (arrowX, arrowY) board
     board'' = collision board' (arrowX, arrowY)
-    state = checkGameState board''
-    model =
-      if board /= board'' && state == InProgress
-        then Model {board = addRandomTile board'', ..}
-        else Model {board = board'', gameState = state, ..}
+    gameState' = checkGameState board''
+    score' = score + calculateScore board board''
+    model
+      | gameState /= InProgress || board == board'' = Model {gameState = gameState', ..}
+      | board /= board'' && gameState' == InProgress = Model {board = addRandomTile board'', score = score', ..}
+      | otherwise = Model {board = board'', score = score', gameState = gameState', ..}
+
+calculateScore :: Board -> Board -> Int
+calculateScore _ _ = 1
 
 checkGameState :: Board -> GameState
 checkGameState board

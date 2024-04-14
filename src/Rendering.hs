@@ -90,8 +90,9 @@ viewModel Model {..} =
                   [ (ms "display", ms "flex"),
                     (ms "justify-content", ms "space-between"),
                     (ms "align-items", ms "center"),
-                    (ms "width", ms "200px"),
-                    (ms "margin-bottom", ms "20px")
+                    (ms "width", ms "260px"),
+                    (ms "margin-bottom", ms "20px"),
+                    (ms "gap", ms "10px")
                   ]
             ]
             [ div_
@@ -101,7 +102,7 @@ viewModel Model {..} =
                         (ms "padding", ms "5px 5px"),
                         (ms "border-radius", ms "3px"),
                         (ms "text-align", ms "center"),
-                        (ms "width", ms "90px")
+                        (ms "width", ms "115px")
                       ]
                 ]
                 [ div_
@@ -130,7 +131,7 @@ viewModel Model {..} =
                         (ms "padding", ms "5px 5px"),
                         (ms "border-radius", ms "3px"),
                         (ms "text-align", ms "center"),
-                        (ms "width", ms "90px")
+                        (ms "width", ms "115px")
                       ]
                 ]
                 [ div_
