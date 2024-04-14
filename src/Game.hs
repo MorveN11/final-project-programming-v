@@ -1,8 +1,8 @@
 {-# LANGUAGE InstanceSigs #-}
 
-module Game (Tile (..), Board, Model (..), Action (..), GameState (..), initialModel, gameSubs) where
+module Game (Tile (..), Board, Model (..), Action (..), GameState (..), initialModel, gameSubs, emptyBoard) where
 
-import Constants (initialScore, size)
+import Constants (aKey, dKey, down, initialBestScore, initialScore, left, right, sKey, size, up, wKey)
 import Miso.Subscription.Keyboard (Arrows (..), directionSub)
 import Miso.Types (Sub)
 
@@ -19,20 +19,23 @@ type Board = [[Tile]]
 data Model = Model
   { board :: Board,
     score :: Int,
+    bestScore :: Int,
     gameState :: GameState
   }
 
 instance Eq Model where
   (==) :: Model -> Model -> Bool
-  (Model board1 score1 gameState1) == (Model board2 score2 gameState2) = board1 == board2 && score1 == score2 && gameState1 == gameState2
+  (Model board1 score1 bestScore1 gameState1) == (Model board2 score2 bestScore2 gameState2) =
+    board1 == board2 && score1 == score2 && bestScore1 == bestScore2 && gameState1 == gameState2
 
 data Action
   = Initialize
+  | Restart
   | ArrowPress !Arrows
   deriving (Show, Eq)
 
 gameSubs :: [Sub Action]
-gameSubs = [directionSub ([38, 87], [40, 83], [37, 65], [39, 68]) ArrowPress]
+gameSubs = [directionSub ([up, wKey], [down, sKey], [left, aKey], [right, dKey]) ArrowPress]
 
 {-
 demoBoardWin :: Board
@@ -52,5 +55,6 @@ initialModel =
   Model
     { board = emptyBoard,
       score = initialScore,
+      bestScore = initialBestScore,
       gameState = InProgress
     }

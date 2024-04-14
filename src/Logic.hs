@@ -3,24 +3,34 @@
 module Logic (updateModel, getIndexOfEmpties, addRandomTile) where
 
 import Collision (collision)
-import Constants (size, tilesAmount, twoPercentChance)
+import Constants (initialScore, size, tilesAmount, twoPercentChance)
 import Data.List (partition)
 import GHC.IO (unsafePerformIO)
-import Game (Action (..), Board, GameState (..), Model (..), Tile (..))
+import Game (Action (..), Board, GameState (..), Model (..), Tile (..), emptyBoard)
 import Miso (Effect, noEff)
 import Miso.Subscription.Keyboard (Arrows (..))
 import Utils (chop, getRandomInt, getValueOfVectorIndex, transpose)
 
 updateModel :: Action -> Model -> Effect Action Model
 updateModel Initialize Model {..} = noEff Model {board = initBoard board, ..}
+updateModel Restart Model {..} =
+  updateModel Initialize Model {board = emptyBoard, score = initialScore, bestScore = bestScore', gameState = InProgress}
+  where
+    bestScore' = max score bestScore
 updateModel (ArrowPress Arrows {..}) Model {..} =
-  let newBoard = move (arrowX, arrowY) board
-      finalBoard = collision newBoard (arrowX, arrowY)
-      updatedModel =
-        if board /= finalBoard
-          then Model {board = addRandomTile finalBoard, score = score, gameState = checkGameState finalBoard}
-          else Model {board = finalBoard, score = score, gameState = checkGameState finalBoard}
-   in noEff updatedModel
+  noEff model
+  where
+    board' = move (arrowX, arrowY) board
+    board'' = collision board' (arrowX, arrowY)
+    gameState' = checkGameState board''
+    score' = score + calculateScore board board''
+    model
+      | gameState /= InProgress || board == board'' = Model {gameState = gameState', ..}
+      | board /= board'' && gameState' == InProgress = Model {board = addRandomTile board'', score = score', ..}
+      | otherwise = Model {board = board'', score = score', gameState = gameState', ..}
+
+calculateScore :: Board -> Board -> Int
+calculateScore _ _ = 1
 
 checkGameState :: Board -> GameState
 checkGameState board
