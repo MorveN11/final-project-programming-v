@@ -2,10 +2,10 @@
 {-# OPTIONS_GHC -Wno-incomplete-patterns #-}
 
 
-module Transition (transition,initTransitionBoard,calculateDesplacement',  calculateDesplacement, updateTransitionTile,IndexedTile) where
+module Transition (transition,initTransitionBoard,calculateDesplacement',  calculateDesplacement,findNewTiles,findNewTiles',IndexedTile) where
 import Constants (size)
 import Utils (chop)
-import Game (Board,TransitionTile (..), Tile (..),VisualBoard)
+import Game (Board,TransitionTile (..), Tile (..), TransitionBoard)
 
 import Data.List (transpose)
 
@@ -39,9 +39,9 @@ filterTile :: [[IndexedTile]]-> [[IndexedTile]]
 filterTile  = map (filter (\(tile,_)-> case tile of Empty -> False ; _ -> True))
 
 
-calculateDesplacement :: [[IndexedTile]]-> [[IndexedTile]] ->(Int,Int) ->[[TransitionTile]]
-calculateDesplacement [x] [y] arrows  = [calculateDesplacement' x y arrows 0]
-calculateDesplacement (x:xs) (y:ys) arrows  = calculateDesplacement' x y arrows 0: calculateDesplacement xs ys arrows
+calculateDesplacement :: [[IndexedTile]]-> [[IndexedTile]] -> (Int,Int) ->[[TransitionTile]]
+calculateDesplacement [] _ _ = []
+calculateDesplacement (x:xs) (y:ys) arrows  = calculateDesplacement' x y arrows 0 : calculateDesplacement xs ys arrows
 
 
 calculateDesplacement' :: [IndexedTile] -> [IndexedTile] -> (Int,Int) -> Int -> [TransitionTile]
@@ -57,10 +57,14 @@ calculateDesplacement' ((Tile x,i):xs) ((Tile y,j):ys) arrows@(arrX,arrY) acc
 calculateDesplacement' ((Empty,_):xs) ty arrows acc = TransitionTileEmpty : calculateDesplacement' xs ty arrows acc
 
 
+findNewTiles :: Board -> Board -> Board
+findNewTiles = zipWith findNewTiles'
 
-updateTransitionTile :: VisualBoard -> Int -> Int -> VisualBoard
-updateTransitionTile grid index value =
-  chop size (xs ++ [TransitionTile value (0,0)] ++ tail ys)
-  where
-    (xs, ys) = splitAt index (concat grid)
 
+findNewTiles' :: [Tile] -> [Tile] -> [Tile]
+findNewTiles' ((Tile x):xs) ((Tile y):ys) | x == y = Empty: findNewTiles' xs ys
+                                          | otherwise = Tile y : findNewTiles' (tail xs) ys
+findNewTiles' (Empty:xs) ((Tile y):ys)  = Tile y: findNewTiles' xs ys
+findNewTiles' [] [] = []
+findNewTiles' (Empty:xs) (Empty:ys) = Empty : findNewTiles' xs ys
+findNewTiles' tile@(Tile _:_) (Empty:ys) = Empty : findNewTiles' tile ys

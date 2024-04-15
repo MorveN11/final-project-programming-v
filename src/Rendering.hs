@@ -3,13 +3,13 @@
 module Rendering (viewModel) where
 
 import Data.Map (fromList)
-import Game (Action (..), GameState (..), Model (..), Tile (..),TransitionTile (..))
+import Game (Action (..), GameState (..), Model (..), Tile (..),TransitionTile (..), VisualBoard (..))
 import Miso (View, button_, div_, h1_, onClick, p_, span_, style_, text)
 import Miso.String (ms,MisoString)
 
 
 viewModel :: Model -> View Action
-viewModel Model {..} =
+viewModel m@(Model {..}) =
   div_
     [ style_ $
         fromList
@@ -40,12 +40,23 @@ viewModel Model {..} =
               (ms "left", ms "10px"),
               (ms "width", ms "400px")
             ]++gridStyle)]
-            (map viewTile (concat visualBoard)),
+            (map viewTile (concat (transitionBoard visualBoard)))
+          ,
           div_[style_ $
                 fromList (gridStyle++
                 [(ms "z-index", ms "2")])]
             (replicate 16 tileCanvas)  
-            ,
+          ,
+          div_ [
+            style_ $ 
+              fromList (gridStyle++[
+              (ms "z-index", ms "3"),
+              (ms "position", ms "absolute"),
+              (ms "top", ms "10px"),
+              (ms "left", ms "10px"),
+              (ms "width", ms "400px")])
+          ](map viewNewTiles (concat (newTiles visualBoard)))
+          ,
           case gameState of
             Win -> viewOverlay "074003" "WIN :D"
             GameOver -> viewOverlay "C93716" "GAME OVER"
@@ -207,6 +218,37 @@ viewOverlay color message =
         [text $ ms message]
     ]
 
+
+
+viewNewTiles :: Tile -> View Action
+viewNewTiles Empty = div_
+    [ style_ $
+        fromList tileStyle]
+    []
+viewNewTiles (Tile n) = div_
+   [ style_ $
+        fromList tileStyle]
+    [
+      div_
+    [ style_ $
+        fromList
+          ([ (ms "background", ms $ getTileColor n),
+            (ms "color", ms $ getTextColor n)]
+            ++[(ms "border-radius", ms "0.03px"),
+            (ms "width", ms "1px"),
+            (ms "height", ms "1px"),
+            (ms "display", ms "flex"),
+            (ms "justify-content", ms "center"),
+            (ms "align-items", ms "center"),
+            (ms "font-size", ms ".3px"),
+            (ms "font-weight", ms "bold"),
+              (ms "transition", ms "transform 0.3s 0.8s ease-in-out"),
+              (ms "transform", ms "scale(90)")
+            ])
+    ]
+    [text $ ms (show n)]
+    ]
+
 viewTile :: TransitionTile -> View Action
 viewTile TransitionTileEmpty =  div_
     [ style_ $
@@ -229,8 +271,6 @@ getTransition x y  | x == 0 && y == 0 = []
                     (ms "transition", ms "transform 0.8s ease-in-out"),
                     (ms "transform", ms $ "translate(" ++ show (x*103) ++ "px," ++ show (y*100) ++ "px)")
                   ] 
---drawCanvas :: View Action
---drawCanvas =
 
 tileCanvas :: View Action
 tileCanvas =
@@ -255,6 +295,8 @@ gridStyle  = [ (ms "display", ms "grid"),
                     (ms "border-color", ms "#7C6C64"),
                     (ms "grid-gap", ms "10px")
                   ]
+
+
 getTileColor :: Int -> String
 
 getTileColor n = case n of

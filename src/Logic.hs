@@ -10,13 +10,13 @@ import Game (Action (..), Board(..),VisualBoard(..), TransitionTile (..), GameSt
 import Miso (Effect, noEff)
 import Miso.Subscription.Keyboard (Arrows (..))
 import Utils (chop, getRandomInt, getValueOfVectorIndex, transpose)
-import Transition (transition, initTransitionBoard,updateTransitionTile)
+import Transition (transition, initTransitionBoard,findNewTiles)
 
 updateModel :: Action -> Model -> Effect Action Model
-updateModel Initialize Model {..} = noEff Model {board =initialBoard,visualBoard = initTransitionBoard initialBoard,..}
+updateModel Initialize Model {..} = noEff Model {board =initialBoard,visualBoard = VisualBoard{transitionBoard =  initTransitionBoard initialBoard, newTiles = emptyBoard Empty},..}
                           where initialBoard = initBoard board
 updateModel Restart Model {..} =
-  updateModel Initialize Model {board = emptyBoard Empty,visualBoard = emptyBoard TransitionTileEmpty, score = initialScore, bestScore = bestScore', gameState = InProgress}
+  updateModel Initialize Model {board = emptyBoard Empty,visualBoard = VisualBoard{transitionBoard =  emptyBoard TransitionTileEmpty, newTiles = emptyBoard Empty}, score = initialScore, bestScore = bestScore', gameState = InProgress}
   where
     bestScore' = max score bestScore
 updateModel (ArrowPress Arrows {..}) Model {..} =
@@ -26,11 +26,15 @@ updateModel (ArrowPress Arrows {..}) Model {..} =
     index = findAvailableTileIndex board
     board' = move (arrowX, arrowY) board
     board'' = collision board' (arrowX, arrowY)
+    finalBoard = addRandomTile board''
     gameState' = checkGameState board''
     score' = score + calculateScore board board''
     model
       | gameState /= InProgress || board == board'' = Model {gameState = gameState', ..}
-      | board /= board'' && gameState' == InProgress = Model {board = updateTile board'' index value , visualBoard = updateTransitionTile (transition board board'' (arrowX, arrowY)) index value, score = score', ..}
+      | board /= board'' && gameState' == InProgress = Model {board = finalBoard , visualBoard = VisualBoard{
+        transitionBoard = transition board board'' (arrowX, arrowY), newTiles = if arrowX == 0 then transpose (findNewTiles (transpose board') (transpose finalBoard))
+                                                                                                else findNewTiles board' finalBoard
+      }, score = score', ..}
       | otherwise = Model {board = board'', score = score', gameState = gameState', ..}
 
 calculateScore :: Board -> Board -> Int

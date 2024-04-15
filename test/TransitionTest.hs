@@ -1,4 +1,4 @@
-module TransitionTest (transitionsTest,IndexedTile) where 
+module TransitionTest (transitionsTest) where 
 
 import Game (Board, Tile (Empty, Tile))
 import Logic (addRandomTile, getIndexOfEmpties)
