@@ -1,23 +1,8 @@
 module Collision (collision) where
 
---import Constants (size)
---import Game (Board, Tile (..))
---import Utils (transpose)
-
-size :: Int
-size = 4
-
-data Tile
-  = Empty
-  | Tile Int
-  deriving (Show, Eq)
-
-type Board = [[Tile]]
-
-transpose :: [[a]] -> [[a]]
-transpose [] = []
-transpose ([] : _) = []
-transpose rows = map head rows : transpose (map tail rows)
+import Constants (size)
+import Game (Board, Tile (..))
+import Utils (transpose)
 
 mayCollide :: Tile -> Tile -> Bool
 mayCollide tile1 tile2
