@@ -3,26 +3,44 @@
 module Logic (updateModel, getIndexOfEmpties, addRandomTile) where
 
 import Collision (collision)
-import Constants (size, tilesAmount, twoPercentChance)
+import Constants (initialScore, size, tilesAmount, twoPercentChance)
 import Data.List (partition)
 import GHC.IO (unsafePerformIO)
-import Game (Action (..), Board, Model (..), Tile (..))
+import Game (Action (..), Board, GameState (..), Model (..), Tile (..), emptyBoard)
 import Miso (Effect, noEff)
 import Miso.Subscription.Keyboard (Arrows (..))
 import Utils (chop, getRandomInt, getValueOfVectorIndex, transpose)
 
 updateModel :: Action -> Model -> Effect Action Model
 updateModel Initialize Model {..} = noEff Model {board = initBoard board, ..}
+updateModel Restart Model {..} =
+  updateModel Initialize Model {board = emptyBoard, score = initialScore, bestScore = bestScore', gameState = InProgress}
+  where
+    bestScore' = max score bestScore
 updateModel (ArrowPress Arrows {..}) Model {..} =
-  let newBoard = move (arrowX, arrowY) board
-      collisionResult = collision newBoard (arrowX, arrowY)
-      finalBoard = fst collisionResult
-      finalScore = score + snd collisionResult
-      updatedModel =
-        if board /= finalBoard
-          then Model {board = addRandomTile finalBoard, score = finalScore}
-          else Model {board = finalBoard, score = score}
-  in noEff updatedModel
+  noEff model
+  where
+    board' = move (arrowX, arrowY) board
+    board'' = collision board' (arrowX, arrowY)
+    gameState' = checkGameState (fst board'')
+    score' = score + snd board''
+    model
+      | gameState /= InProgress || board == fst board'' = Model {gameState = gameState', ..}
+      | board /= fst board'' && gameState' == InProgress = Model {board = addRandomTile (fst board''), score = score', ..}
+      | otherwise = Model {board = fst board'', score = score', gameState = gameState', ..}
+
+checkGameState :: Board -> GameState
+checkGameState board
+  | any (elem (Tile 2048)) board = Win
+  | not (any (elem Empty) board) && not (canMerge board) = GameOver
+  | otherwise = InProgress
+
+canMerge :: Board -> Bool
+canMerge board = any canMergeRow board || any canMergeRow (transpose board)
+
+canMergeRow :: [Tile] -> Bool
+canMergeRow (x : y : xs) = x == y || canMergeRow (y : xs)
+canMergeRow _ = False
 
 initBoard :: Board -> Board
 initBoard board
