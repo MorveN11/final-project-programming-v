@@ -4,7 +4,7 @@ module Rendering (viewModel) where
 
 import Data.Map (fromList)
 import Game (Action (..), GameState (..), Model (..), Tile (..),TransitionTile (..), VisualBoard (..))
-import Miso (View, button_, div_, h1_, onClick, p_, span_, style_, text)
+import Miso (View, button_, div_, h1_, onClick, p_, span_, style_, text,link_, href_, rel_,class_)
 import Miso.String (ms,MisoString)
 
 
@@ -21,7 +21,9 @@ viewModel m@(Model {..}) =
             (ms "font-family", ms "Arial, sans-serif")
           ]
     ]
-    [ div_
+    [ link_ [ rel_ (ms "stylesheet")
+                 , href_ (ms "/home/fundacion/Documents/SEMESTER5/PROGRA/HASKELL/progra4/miso/learning/final-project-programming-v/static/style.css") ] ,
+      div_
         [ style_ $
             fromList
               [ (ms "background", ms "#bbada0"),
@@ -35,22 +37,23 @@ viewModel m@(Model {..}) =
         ]
         [div_[style_ $ 
             fromList ([
-              (ms "position", ms "absolute"),
-              (ms "top", ms "10px"),
-              (ms "left", ms "10px"),
-              (ms "width", ms "400px")
+              (ms "z-index", ms "3")
             ]++gridStyle)]
             (map viewTile (concat (transitionBoard visualBoard)))
           ,
           div_[style_ $
                 fromList (gridStyle++
-                [(ms "z-index", ms "2")])]
+                [(ms "z-index", ms "2"),
+                (ms "position", ms "absolute"),
+              (ms "top", ms "10px"),
+              (ms "left", ms "10px"),
+              (ms "width", ms "400px")])]
             (replicate 16 tileCanvas)  
           ,
           div_ [
             style_ $ 
               fromList (gridStyle++[
-              (ms "z-index", ms "3"),
+              (ms "z-index", ms "4"),
               (ms "position", ms "absolute"),
               (ms "top", ms "10px"),
               (ms "left", ms "10px"),
@@ -227,26 +230,38 @@ viewNewTiles Empty = div_
     []
 viewNewTiles (Tile n) = div_
    [ style_ $
-        fromList tileStyle]
+        fromList (tileStyle++[
+          (ms "color", ms $ getTextColor n),
+          (ms "position", ms "relative")
+        ])]
     [
-      div_
-    [ style_ $
+    span_ [
+      class_ (ms "new-tile-number"),
+      style_ $ fromList [ 
+                          (ms "font-size", ms "1px"),
+                          (ms "z-index", ms "50")]
+            ] [text (ms (show n))],
+    div_
+    [ class_ (ms "new-tile-added")
+      ,style_ $
         fromList
-          ([ (ms "background", ms $ getTileColor n),
-            (ms "color", ms $ getTextColor n)]
-            ++[(ms "border-radius", ms "0.03px"),
+          [(ms "background", ms $ getTileColor n),
+            (ms "border-radius", ms "0.03px"),
             (ms "width", ms "1px"),
             (ms "height", ms "1px"),
             (ms "display", ms "flex"),
             (ms "justify-content", ms "center"),
             (ms "align-items", ms "center"),
-            (ms "font-size", ms ".3px"),
             (ms "font-weight", ms "bold"),
-              (ms "transition", ms "transform 0.3s 0.8s ease-in-out"),
-              (ms "transform", ms "scale(90)")
-            ])
+            (ms "position", ms "absolute"),
+            (ms "top", ms "0"),
+            (ms "left", ms "0"),
+            (ms "right", ms "0"),
+            (ms "bottom", ms "0"),
+            (ms "z-index", ms "40")
+            ]
     ]
-    [text $ ms (show n)]
+    []
     ]
 
 viewTile :: TransitionTile -> View Action
@@ -268,8 +283,8 @@ viewTile (TransitionTile n (x,y)) =
 getTransition :: Int -> Int  -> [(MisoString, MisoString)]
 getTransition x y  | x == 0 && y == 0 = []
                   | otherwise = [
-                    (ms "transition", ms "transform 0.8s ease-in-out"),
-                    (ms "transform", ms $ "translate(" ++ show (x*103) ++ "px," ++ show (y*100) ++ "px)")
+                    (ms "transition", ms "transform 0.5s ease"),
+                    (ms "transform", ms $ "translate(" ++ show (fromIntegral x*102.7) ++ "px," ++ show (y*100) ++ "px)")
                   ] 
 
 tileCanvas :: View Action

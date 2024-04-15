@@ -1,0 +1,46 @@
+@keyframes scaleTileAnimation {
+    0% {
+      width: 1px;
+      height: 1px; 
+    }
+    70% {
+
+      width: 93px;
+      height: 93px;
+    }
+    100% {
+
+      width: 90px;
+      height: 90px;
+    }
+  }
+  @keyframes hideTile {
+   
+    70% {
+      visibility: visible;   
+    }
+    100% {
+      visibility: hidden;   
+    }
+  }
+
+  @keyframes scaleTextAnimation {
+    0% {
+      font-size: 1px; 
+    }
+    100% {
+      font-size: 30px;
+    }
+  }
+  
+  .new-tile-added {
+    animation: scaleTileAnimation .3s .5s forwards;
+  }
+
+  .new-tile-number {
+    animation: scaleTextAnimation .3s .5s forwards;
+  }
+
+  .hidden-tile {
+    animation: hideTile .5s forwards;
+  }

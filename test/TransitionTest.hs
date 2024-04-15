@@ -70,6 +70,30 @@ moveBoardUp = property $ transition gridBoard gridDesplacedUp (0,1) === [[Transi
                                                                               [TransitionTileEmpty,TransitionTileEmpty, TransitionTileEmpty, TransitionTileEmpty],
                                                                               [TransitionTileEmpty,TransitionTileEmpty,TransitionTileEmpty,TransitionTile 2 (0,-2)]]
 
+
+
+
+gridBoard1 :: Board
+gridBoard1  =  [ [Empty,Empty,Empty,Empty],
+                [Empty,Tile 2,Empty,Empty],
+                [Empty,Empty,Empty,Tile 8],
+                [Empty,Empty,Tile 2,Tile 4]]
+
+
+gridDesplaced1Left :: Board
+gridDesplaced1Left =
+              [ [Empty,Empty,Empty,Empty],
+                [Tile 2,Empty,Empty,Empty],
+                [Tile 8,Empty,Empty,Empty],
+                [Tile 2,Tile 4 ,Empty,Empty]]
+
+
+moveBoard1Left :: Property
+moveBoard1Left = property $ transition gridBoard1 gridDesplaced1Left (-1,0) === [[TransitionTileEmpty,TransitionTileEmpty, TransitionTileEmpty, TransitionTileEmpty],
+                                                                              [TransitionTileEmpty,TransitionTile 2 (-1,0),TransitionTileEmpty, TransitionTileEmpty],
+                                                                              [TransitionTileEmpty,TransitionTileEmpty, TransitionTileEmpty, TransitionTile 8 (-3,0)],
+                                                                              [TransitionTileEmpty,TransitionTileEmpty,TransitionTile 2 (-2,0),TransitionTile 4 (-2,0)]]
+
 initialBoard :: Board
 initialBoard =  [ [Empty,Tile 2,Tile 3,Tile 2],
                   [Empty,Empty,Empty,Empty],
@@ -89,5 +113,6 @@ transitionsTest  = [ quickCheck moveListLeft,
                      quickCheck moveListLeft3,
                      quickCheck moveBoardLeft,
                      quickCheck moveBoardUp,
-                     quickCheck initialBoardParserTest
+                     quickCheck initialBoardParserTest,
+                     quickCheck moveBoard1Left
                      ]

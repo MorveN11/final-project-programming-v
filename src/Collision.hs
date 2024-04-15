@@ -9,29 +9,66 @@ mayCollide tile1 tile2
   | tile1 == Empty || tile2 == Empty = False
   | otherwise = tile1 == tile2
 
-collisionTiles :: Tile -> Tile -> Tile
-collisionTiles (Tile value1) (Tile value2) = Tile (value1 + value2)
-collisionTiles _ _ = Empty
+collisionTiles :: Tile -> Tile -> (Tile, Int)
+collisionTiles (Tile value1) (Tile value2) = (Tile (value1 + value2), value1 + value2)
+collisionTiles _ _ = (Empty,0)
 
-collision :: Board -> (Int, Int) -> Board
+collision :: Board -> (Int, Int) -> (Board, Int)
 collision board (positionX, positionY)
-  | positionX < 0 && abs positionX > length board = board
-  | positionY < 0 && abs positionY > length (head board) = board
+  | positionX < 0 && abs positionX > length board = (board, 0)
+  | positionY < 0 && abs positionY > length (head board) = (board, 0)
   | otherwise = case (positionX, positionY) of
-      (-1, 0) -> map (fillRow . mergeRow . mergeRow) board
-      (1, 0) -> map (reverse . fillRow . mergeRow . mergeRow . reverse) board
-      (0, 1) -> transpose (map (fillRow . mergeRow . mergeRow) (transpose board))
-      (0, -1) -> transpose (map (reverse . fillRow . mergeRow . mergeRow . reverse) (transpose board))
-      _ -> board
+      (-1, 0) -> collisionLeft board
+      (1, 0) -> collisionRight board
+      (0, 1) -> collisionTop board
+      (0, -1) -> collisionBottom board
+      _ -> (board, 0)
 
-mergeRow :: [Tile] -> [Tile]
-mergeRow [] = []
-mergeRow [tile] = [tile]
+collisionLeft :: Board -> (Board, Int)
+collisionLeft board =
+  let result = map (\row -> let (newRow, newRowScore) = mergeRow row
+                            in (fillRow newRow, newRowScore)) board
+      newBoard = map fst result
+      newScore = sum (map snd result)
+  in (newBoard, newScore)
+
+collisionRight :: Board -> (Board, Int)
+collisionRight board =
+  let result = map (\row -> let (newRow, newRowScore) = mergeRow (reverse row)
+                            in (fillRow newRow, newRowScore)) board
+      newBoard = map (reverse . fst) result
+      newScore = sum (map snd result)
+  in (newBoard, newScore)
+
+collisionBottom :: Board -> (Board, Int)
+collisionBottom board =
+  let result = map (\row -> let (newRow, newRowScore) = mergeRow (reverse row)
+                            in (fillRow newRow, newRowScore)) (transpose board)
+      newBoard = transpose (map (reverse . fst) result)
+      newScore = sum (map snd result)
+  in (newBoard, newScore)
+
+collisionTop :: Board -> (Board, Int)
+collisionTop board =
+  let result = map (\row -> let (newRow, newRowScore) = mergeRow row
+                            in (fillRow newRow, newRowScore)) (transpose board)
+      newBoard = transpose (map fst result)
+      newScore = sum (map snd result)
+  in (newBoard, newScore)
+
+mergeRow :: [Tile] -> ([Tile], Int)
+mergeRow [] = ([], 0)
+mergeRow [tile] = ([tile], 0)
 mergeRow (tile1 : tile2 : tiles)
   | mayCollide tile1 tile2 =
-      let collisionedRow = collisionTiles tile1 tile2 : tiles
-       in collisionedRow
-  | otherwise = tile1 : mergeRow (tile2 : tiles)
+      let collisionAndPoints = collisionTiles tile1 tile2
+          collisionAux = mergeRow tiles
+          collisionRow = fst collisionAndPoints : fst collisionAux
+      in (collisionRow, snd collisionAndPoints + snd collisionAux)
+  | otherwise =
+    let result = mergeRow (tile2 : tiles)
+        newRow = tile1 : fst result
+    in (newRow, snd result)
 
 fillRow :: [Tile] -> [Tile]
 fillRow tiles = if length tiles <= size then tiles ++ replicate (size - length tiles) Empty else take size tiles

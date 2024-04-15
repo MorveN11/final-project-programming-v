@@ -22,23 +22,22 @@ updateModel Restart Model {..} =
 updateModel (ArrowPress Arrows {..}) Model {..} =
   noEff model
   where
-    value = generateRandomValue
-    index = findAvailableTileIndex board
+    
     board' = move (arrowX, arrowY) board
     board'' = collision board' (arrowX, arrowY)
-    finalBoard = addRandomTile board''
-    gameState' = checkGameState board''
-    score' = score + calculateScore board board''
+    board''' = fst board''
+    index = findAvailableTileIndex board'''
+    value = generateRandomValue
+    calculateScore = snd board''
+    gameState' = checkGameState board'''
+    score' = score + calculateScore
     model
-      | gameState /= InProgress || board == board'' = Model {gameState = gameState', ..}
-      | board /= board'' && gameState' == InProgress = Model {board = finalBoard , visualBoard = VisualBoard{
-        transitionBoard = transition board board'' (arrowX, arrowY), newTiles = if arrowX == 0 then transpose (findNewTiles (transpose board') (transpose finalBoard))
-                                                                                                else findNewTiles board' finalBoard
-      }, score = score', ..}
-      | otherwise = Model {board = board'', score = score', gameState = gameState', ..}
-
-calculateScore :: Board -> Board -> Int
-calculateScore _ _ = 1
+      | gameState /= InProgress || board == board''' = Model {gameState = gameState', ..}
+      | board /= board''' && gameState' == InProgress = Model {board = updateTile board''' index value,visualBoard = VisualBoard{
+        transitionBoard = transition board board''' (arrowX, arrowY), newTiles = if arrowX == 0 then  updateTile (transpose (findNewTiles (transpose board') (transpose board'''))) index value
+                                                                                                else updateTile (findNewTiles board' board''') index value
+      } ,score = score', ..}
+      | otherwise = Model {board = board''', score = score', gameState = gameState', ..}
 
 checkGameState :: Board -> GameState
 checkGameState board

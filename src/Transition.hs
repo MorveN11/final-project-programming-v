@@ -67,4 +67,5 @@ findNewTiles' ((Tile x):xs) ((Tile y):ys) | x == y = Empty: findNewTiles' xs ys
 findNewTiles' (Empty:xs) ((Tile y):ys)  = Tile y: findNewTiles' xs ys
 findNewTiles' [] [] = []
 findNewTiles' (Empty:xs) (Empty:ys) = Empty : findNewTiles' xs ys
+findNewTiles' [] (Empty:ys) = Empty : findNewTiles' [] ys
 findNewTiles' tile@(Tile _:_) (Empty:ys) = Empty : findNewTiles' tile ys
