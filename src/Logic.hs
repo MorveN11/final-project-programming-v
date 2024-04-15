@@ -15,12 +15,14 @@ updateModel :: Action -> Model -> Effect Action Model
 updateModel Initialize Model {..} = noEff Model {board = initBoard board, ..}
 updateModel (ArrowPress Arrows {..}) Model {..} =
   let newBoard = move (arrowX, arrowY) board
-      finalBoard = collision newBoard (arrowX, arrowY)
+      collisionResult = collision newBoard (arrowX, arrowY)
+      finalBoard = fst collisionResult
+      finalScore = score + snd collisionResult
       updatedModel =
         if board /= finalBoard
-          then Model {board = addRandomTile finalBoard, score = score}
+          then Model {board = addRandomTile finalBoard, score = finalScore}
           else Model {board = finalBoard, score = score}
-   in noEff updatedModel
+  in noEff updatedModel
 
 initBoard :: Board -> Board
 initBoard board
