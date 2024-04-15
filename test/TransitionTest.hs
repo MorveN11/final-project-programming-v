@@ -11,17 +11,17 @@ import Game (Board,VisualBoard(..),TransitionTile (..), Tile (Empty, Tile))
 
 grid :: [[IndexedTile]]
 grid =
-  [ [(Empty,0,0), (Empty,1,0), (Empty,2,0), (Empty,3,0)],
-    [(Tile 3,0,0), (Tile 3,1,0), (Tile 2,2,0), (Tile 2,3,0)],
-    [(Tile 10,0,0), (Empty,1,0), (Empty,2,0), (Tile 3,3,0)],
-    [(Empty,0,0), (Empty,1,0), (Empty,2,0), (Empty,0,0)]
+  [ [(Empty,0), (Empty,1), (Empty,2), (Empty,3)],
+    [(Tile 3,0), (Tile 3,1), (Tile 2,2), (Tile 2,3)],
+    [(Tile 10,0), (Empty,1), (Empty,2), (Tile 3,3)],
+    [(Empty,0), (Empty,1), (Empty,2), (Empty,3)]
   ]
 
 gridDesplacedLeft :: [[IndexedTile]]
 gridDesplacedLeft =
   [ [],
-    [(Tile 6,0,0), (Tile 4,1,0)],
-    [(Tile 10,0,0), (Tile 3,1,0)],
+    [(Tile 6,0), (Tile 4,1)],
+    [(Tile 10,0), (Tile 3,1)],
     []
   ]
 
@@ -32,14 +32,14 @@ gridDesplacedLeft =
 
 
 moveListLeft :: Property
-moveListLeft = property $ calculateDesplacement'  [(Tile 10,0,0), (Empty,1,0), (Tile 3,2,0), (Tile 3,3,0)] [(Tile 10,0,0), (Tile 6,1,0)] (-1,0) === [TransitionTile 10 (0,0),TransitionTileEmpty,TransitionTile  3 (-1,0),TransitionTile  3 (-2,0)]
+moveListLeft = property $ calculateDesplacement'  [(Tile 10,0), (Empty,1), (Tile 3,2), (Tile 3,3)] [(Tile 10,0), (Tile 6,1)] (-1,0) 0 === [TransitionTile 10 (0,0),TransitionTileEmpty,TransitionTile  3 (-1,0),TransitionTile  3 (-2,0)]
 
 moveListLeft2:: Property                                            
-moveListLeft2 = property $ calculateDesplacement' [(Tile 3,0,0),(Tile 3,1,0),(Tile 3,2,0),(Tile 3,3,0)] [(Tile 6,0,0),(Tile 6,1,0)] (-1,0) === [TransitionTile 3 (0,0), TransitionTile  3 (-1,0), TransitionTile 3 (-1,0), TransitionTile 3 (-2,0)]
+moveListLeft2 = property $ calculateDesplacement' [(Tile 3,0),(Tile 3,1),(Tile 3,2),(Tile 3,3)] [(Tile 6,0),(Tile 6,1)] (-1,0) 0=== [TransitionTile 3 (0,0), TransitionTile  3 (-1,0), TransitionTile 3 (-1,0), TransitionTile 3 (-2,0)]
 
 
 moveListLeft3:: Property                                            
-moveListLeft3 = property $ calculateDesplacement' [(Empty,0,0),(Empty,1,0),(Empty,2,0),(Empty,3,0)] [] (-1,0) === [TransitionTileEmpty,TransitionTileEmpty,TransitionTileEmpty,TransitionTileEmpty]
+moveListLeft3 = property $ calculateDesplacement' [(Empty,0),(Empty,1),(Empty,2),(Empty,3)] [] (-1,0) 0 === [TransitionTileEmpty,TransitionTileEmpty,TransitionTileEmpty,TransitionTileEmpty]
 
 
 moveBoardLeft :: Property

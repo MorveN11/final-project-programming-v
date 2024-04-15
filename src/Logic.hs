@@ -3,10 +3,10 @@
 module Logic (updateModel, getIndexOfEmpties, addRandomTile) where
 
 import Collision (collision)
-import Constants (size, tilesAmount, twoPercentChance)
+import Constants (initialScore, size, tilesAmount, twoPercentChance)
 import Data.List (partition)
 import GHC.IO (unsafePerformIO)
-import Game (Action (..), Board, Model (..), Tile (..))
+import Game (Action (..), Board(..),VisualBoard(..), TransitionTile (..), GameState (..), Model (..), Tile (..), emptyBoard)
 import Miso (Effect, noEff)
 import Miso.Subscription.Keyboard (Arrows (..))
 import Utils (chop, getRandomInt, getValueOfVectorIndex, transpose)
@@ -14,18 +14,40 @@ import Transition (transition, initTransitionBoard,updateTransitionTile)
 
 updateModel :: Action -> Model -> Effect Action Model
 updateModel Initialize Model {..} = noEff Model {board =initialBoard,visualBoard = initTransitionBoard initialBoard,..}
-                        where initialBoard = initBoard board
+                          where initialBoard = initBoard board
+updateModel Restart Model {..} =
+  updateModel Initialize Model {board = emptyBoard Empty,visualBoard = emptyBoard TransitionTileEmpty, score = initialScore, bestScore = bestScore', gameState = InProgress}
+  where
+    bestScore' = max score bestScore
 updateModel (ArrowPress Arrows {..}) Model {..} =
-  let newBoard = move (arrowX, arrowY) board
-      finalBoard = collision newBoard (arrowX, arrowY)
-      updatedModel =
-        if board /= finalBoard
-          then Model {board = updateTile finalBoard  index value , score = score, visualBoard = updateTransitionTile (transition board finalBoard (arrowX, arrowY)) index value, ..}
-          else Model {board = finalBoard, score = score,..}
-   in noEff updatedModel
-   where 
-        value = generateRandomValue
-        index = findAvailableTileIndex board
+  noEff model
+  where
+    value = generateRandomValue
+    index = findAvailableTileIndex board
+    board' = move (arrowX, arrowY) board
+    board'' = collision board' (arrowX, arrowY)
+    gameState' = checkGameState board''
+    score' = score + calculateScore board board''
+    model
+      | gameState /= InProgress || board == board'' = Model {gameState = gameState', ..}
+      | board /= board'' && gameState' == InProgress = Model {board = updateTile board'' index value , visualBoard = updateTransitionTile (transition board board'' (arrowX, arrowY)) index value, score = score', ..}
+      | otherwise = Model {board = board'', score = score', gameState = gameState', ..}
+
+calculateScore :: Board -> Board -> Int
+calculateScore _ _ = 1
+
+checkGameState :: Board -> GameState
+checkGameState board
+  | any (elem (Tile 2048)) board = Win
+  | not (any (elem Empty) board) && not (canMerge board) = GameOver
+  | otherwise = InProgress
+
+canMerge :: Board -> Bool
+canMerge board = any canMergeRow board || any canMergeRow (transpose board)
+
+canMergeRow :: [Tile] -> Bool
+canMergeRow (x : y : xs) = x == y || canMergeRow (y : xs)
+canMergeRow _ = False
 
 
 initBoard :: Board -> Board

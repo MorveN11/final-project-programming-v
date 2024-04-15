@@ -3,9 +3,10 @@
 module Rendering (viewModel) where
 
 import Data.Map (fromList)
-import Game (Action (..), Model (..), Tile (..), TransitionTile (TransitionTileEmpty, TransitionTile))
-import Miso (View, button_, div_, h1_, p_, span_, style_, text)
-import Miso.String (ms, MisoString)
+import Game (Action (..), GameState (..), Model (..), Tile (..),TransitionTile (..))
+import Miso (View, button_, div_, h1_, onClick, p_, span_, style_, text)
+import Miso.String (ms,MisoString)
+
 
 viewModel :: Model -> View Action
 viewModel Model {..} =
@@ -32,19 +33,23 @@ viewModel Model {..} =
                 (ms "overflow", ms "hidden")
               ]
         ]
-        [ div_[style_ $ 
+        [div_[style_ $ 
             fromList ([
               (ms "position", ms "absolute"),
               (ms "top", ms "10px"),
               (ms "left", ms "10px"),
               (ms "width", ms "400px")
             ]++gridStyle)]
-            (map viewTile (concat visualBoard))
-          ,
+            (map viewTile (concat visualBoard)),
           div_[style_ $
                 fromList (gridStyle++
                 [(ms "z-index", ms "2")])]
-            (replicate 16 tileCanvas)
+            (replicate 16 tileCanvas)  
+            ,
+          case gameState of
+            Win -> viewOverlay "074003" "WIN :D"
+            GameOver -> viewOverlay "C93716" "GAME OVER"
+            InProgress -> div_ [] []
         ],
       div_
         [ style_ $
@@ -90,17 +95,19 @@ viewModel Model {..} =
                   [ (ms "display", ms "flex"),
                     (ms "justify-content", ms "space-between"),
                     (ms "align-items", ms "center"),
-                    (ms "width", ms "200px"),
-                    (ms "margin-bottom", ms "20px")
+                    (ms "width", ms "260px"),
+                    (ms "margin-bottom", ms "20px"),
+                    (ms "gap", ms "10px")
                   ]
             ]
             [ div_
                 [ style_ $
                     fromList
                       [ (ms "background", ms "#bbada0"),
-                        (ms "padding", ms "5px 15px"),
+                        (ms "padding", ms "5px 5px"),
                         (ms "border-radius", ms "3px"),
-                        (ms "text-align", ms "center")
+                        (ms "text-align", ms "center"),
+                        (ms "width", ms "115px")
                       ]
                 ]
                 [ div_
@@ -126,9 +133,10 @@ viewModel Model {..} =
                 [ style_ $
                     fromList
                       [ (ms "background", ms "#bbada0"),
-                        (ms "padding", ms "5px 15px"),
+                        (ms "padding", ms "5px 5px"),
                         (ms "border-radius", ms "3px"),
-                        (ms "text-align", ms "center")
+                        (ms "text-align", ms "center"),
+                        (ms "width", ms "115px")
                       ]
                 ]
                 [ div_
@@ -148,7 +156,7 @@ viewModel Model {..} =
                             (ms "font-weight", ms "bold")
                           ]
                     ]
-                    [text $ ms "2048"]
+                    [text $ ms bestScore]
                 ]
             ],
           button_
@@ -163,15 +171,44 @@ viewModel Model {..} =
                     (ms "font-weight", ms "bold"),
                     (ms "cursor", ms "pointer"),
                     (ms "font-family", ms "Arial, sans-serif")
-                  ]
+                  ],
+              onClick Restart
             ]
             [text $ ms "New Game"]
         ]
     ]
 
-viewTile :: TransitionTile -> View Action
-viewTile TransitionTileEmpty =
+
+viewOverlay :: String -> String -> View Action
+viewOverlay color message =
   div_
+    [ style_ $
+        fromList
+          [ (ms "position", ms "absolute"),
+            (ms "top", ms "0"),
+            (ms "left", ms "0"),
+            (ms "width", ms "100%"),
+            (ms "height", ms "100%"),
+            (ms "background", ms $ "#" ++ color ++ "A6"),
+            (ms "display", ms "flex"),
+            (ms "justify-content", ms "center"),
+            (ms "align-items", ms "center")
+          ]
+    ]
+    [ div_
+        [ style_ $
+            fromList
+              [ (ms "padding", ms "10px 20px"),
+                (ms "color", ms "#ffffff"),
+                (ms "font-size", ms "30px"),
+                (ms "font-weight", ms "bold")
+              ]
+        ]
+        [text $ ms message]
+    ]
+
+viewTile :: TransitionTile -> View Action
+viewTile TransitionTileEmpty =  div_
     [ style_ $
         fromList tileStyle]
     []
