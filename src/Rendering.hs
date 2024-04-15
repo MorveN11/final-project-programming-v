@@ -3,9 +3,9 @@
 module Rendering (viewModel) where
 
 import Data.Map (fromList)
-import Game (Action (..), Model (..), Tile (..))
+import Game (Action (..), Model (..), Tile (..), TransitionTile (TransitionTileEmpty, TransitionTile))
 import Miso (View, button_, div_, h1_, p_, span_, style_, text)
-import Miso.String (ms)
+import Miso.String (ms, MisoString)
 
 viewModel :: Model -> View Action
 viewModel Model {..} =
@@ -27,19 +27,24 @@ viewModel Model {..} =
                 (ms "padding", ms "10px"),
                 (ms "border-radius", ms "6px"),
                 (ms "width", ms "400px"),
-                (ms "margin-right", ms "40px")
+                (ms "margin-right", ms "40px"),
+                (ms "position", ms "relative"),
+                (ms "overflow", ms "hidden")
               ]
         ]
-        [ div_
-            [ style_ $
-                fromList
-                  [ (ms "display", ms "grid"),
-                    (ms "grid-template-columns", ms "repeat(4, 1fr)"),
-                    (ms "border-color", ms "#7C6C64"),
-                    (ms "grid-gap", ms "10px")
-                  ]
-            ]
-            (map viewTile (concat board))
+        [ div_[style_ $ 
+            fromList ([
+              (ms "position", ms "absolute"),
+              (ms "top", ms "10px"),
+              (ms "left", ms "10px"),
+              (ms "width", ms "400px")
+            ]++gridStyle)]
+            (map viewTile (concat visualBoard))
+          ,
+          div_[style_ $
+                fromList (gridStyle++
+                [(ms "z-index", ms "2")])]
+            (replicate 16 tileCanvas)
         ],
       div_
         [ style_ $
@@ -164,28 +169,40 @@ viewModel Model {..} =
         ]
     ]
 
-viewTile :: Tile -> View Action
-viewTile Empty =
+viewTile :: TransitionTile -> View Action
+viewTile TransitionTileEmpty =
   div_
     [ style_ $
-        fromList
-          [ (ms "background", ms "#cdc1b4"),
-            (ms "border-radius", ms "3px"),
-            (ms "width", ms "90px"),
-            (ms "height", ms "90px"),
-            (ms "display", ms "flex"),
-            (ms "justify-content", ms "center"),
-            (ms "align-items", ms "center")
-          ]
-    ]
+        fromList tileStyle]
     []
-viewTile (Tile n) =
+viewTile (TransitionTile n (x,y)) =
   div_
     [ style_ $
         fromList
-          [ (ms "background", ms $ getTileColor n),
-            (ms "color", ms $ getTextColor n),
-            (ms "border-radius", ms "3px"),
+          ([ (ms "background", ms $ getTileColor n),
+            (ms "color", ms $ getTextColor n)]
+            ++tileStyle
+            ++getTransition x y)
+    ]
+    [text $ ms (show n)]
+
+getTransition :: Int -> Int  -> [(MisoString, MisoString)]
+getTransition x y  | x == 0 && y == 0 = []
+                  | otherwise = [
+                    (ms "transition", ms "transform 0.8s ease-in-out"),
+                    (ms "transform", ms $ "translate(" ++ show (x*103) ++ "px," ++ show (y*100) ++ "px)")
+                  ] 
+--drawCanvas :: View Action
+--drawCanvas =
+
+tileCanvas :: View Action
+tileCanvas =
+  div_
+    [ style_ $
+        fromList ((ms "background", ms "#cdc1b4"):tileStyle)] []
+
+tileStyle :: [(MisoString, MisoString)]
+tileStyle = [(ms "border-radius", ms "3px"),
             (ms "width", ms "90px"),
             (ms "height", ms "90px"),
             (ms "display", ms "flex"),
@@ -193,11 +210,16 @@ viewTile (Tile n) =
             (ms "align-items", ms "center"),
             (ms "font-size", ms "30px"),
             (ms "font-weight", ms "bold")
-          ]
-    ]
-    [text $ ms (show n)]
+            ]
 
+gridStyle  :: [(MisoString, MisoString)]
+gridStyle  = [ (ms "display", ms "grid"),
+                    (ms "grid-template-columns", ms "repeat(4, 1fr)"),
+                    (ms "border-color", ms "#7C6C64"),
+                    (ms "grid-gap", ms "10px")
+                  ]
 getTileColor :: Int -> String
+
 getTileColor n = case n of
   2 -> "#eee4da"
   4 -> "#ede0c8"
