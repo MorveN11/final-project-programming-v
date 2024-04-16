@@ -37,7 +37,8 @@ viewModel m@(Model {..}) =
         ]
         [div_[style_ $ 
             fromList ([
-              (ms "z-index", ms "3")
+              (ms "z-index", ms "3"),
+              (ms "position", ms "sticky")
             ]++gridStyle)]
             (map viewTile (concat (transitionBoard visualBoard)))
           ,
