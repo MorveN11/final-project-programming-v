@@ -23,8 +23,8 @@ data GameState = InProgress | Win | GameOver
 type Board = [[Tile]]
 
 data VisualBoard  =  VisualBoard {
-                      transitionBoard :: TransitionBoard,
-                      newTiles :: Board
+                      transitionBoard :: !TransitionBoard,
+                      newTiles :: !Board
                       } 
               
 
@@ -42,7 +42,9 @@ instance Eq Model where
     board1 == board2 && score1 == score2 && bestScore1 == bestScore2 && gameState1 == gameState2
 
 data Action
-  = Initialize
+  = 
+    NoOp
+  |  Initialize
   | Restart
   | ArrowPress !Arrows
   deriving (Show, Eq)

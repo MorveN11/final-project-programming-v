@@ -5,8 +5,8 @@
     }
     70% {
 
-      width: 93px;
-      height: 93px;
+      width: 96px;
+      height: 96px;
     }
     100% {
 
@@ -34,13 +34,13 @@
   }
   
   .new-tile-added {
-    animation: scaleTileAnimation .3s .5s forwards;
+    animation: scaleTileAnimation .2s .3s forwards;
   }
 
   .new-tile-number {
-    animation: scaleTextAnimation .3s .5s forwards;
+    animation: scaleTextAnimation .2s .3s forwards;
   }
 
   .hidden-tile {
-    animation: hideTile .5s forwards;
+    animation: hideTile .2s forwards;
   }

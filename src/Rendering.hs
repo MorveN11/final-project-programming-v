@@ -31,15 +31,18 @@ viewModel m@(Model {..}) =
                 (ms "border-radius", ms "6px"),
                 (ms "width", ms "400px"),
                 (ms "margin-right", ms "40px"),
-                (ms "position", ms "relative"),
-                (ms "overflow", ms "hidden")
+                (ms "position", ms "relative")
               ]
         ]
-        [div_[style_ $ 
+        [div_[style_ $
             fromList ([
-              (ms "z-index", ms "3")
+              (ms "z-index", ms "3"),
+                            (ms "position", ms "absolute"),
+              (ms "top", ms "10px"),
+              (ms "left", ms "10px"),
+              (ms "width", ms "400px")
             ]++gridStyle)]
-            (map viewTile (concat (transitionBoard visualBoard)))
+            (map viewTile (concat (coords (transitionBoard visualBoard))))
           ,
           div_[style_ $
                 fromList (gridStyle++
@@ -48,16 +51,12 @@ viewModel m@(Model {..}) =
               (ms "top", ms "10px"),
               (ms "left", ms "10px"),
               (ms "width", ms "400px")])]
-            (replicate 16 tileCanvas)  
+            (replicate 16 tileCanvas)
           ,
           div_ [
-            style_ $ 
+            style_ $
               fromList (gridStyle++[
-              (ms "z-index", ms "4"),
-              (ms "position", ms "absolute"),
-              (ms "top", ms "10px"),
-              (ms "left", ms "10px"),
-              (ms "width", ms "400px")])
+              (ms "z-index", ms "4")])
           ](map viewNewTiles (concat (newTiles visualBoard)))
           ,
           case gameState of
@@ -192,6 +191,8 @@ viewModel m@(Model {..}) =
         ]
     ]
 
+coords :: [[TransitionTile]] -> [[(TransitionTile, Int, Int)]]
+coords matrix = zipWith (\row rowIndex -> zipWith (\value colIndex -> (value, rowIndex, colIndex)) row [0..]) matrix [0..]
 
 viewOverlay :: String -> String -> View Action
 viewOverlay color message =
@@ -237,7 +238,7 @@ viewNewTiles (Tile n) = div_
     [
     span_ [
       class_ (ms "new-tile-number"),
-      style_ $ fromList [ 
+      style_ $ fromList [
                           (ms "font-size", ms "1px"),
                           (ms "z-index", ms "50")]
             ] [text (ms (show n))],
@@ -264,28 +265,35 @@ viewNewTiles (Tile n) = div_
     []
     ]
 
-viewTile :: TransitionTile -> View Action
-viewTile TransitionTileEmpty =  div_
+viewTile ::( TransitionTile ,Int , Int) -> View Action
+viewTile (TransitionTileEmpty ,x ,y) =  div_
     [ style_ $
-        fromList tileStyle]
+        fromList (tileStyle++[
+          (ms "position", ms "absolute"),
+          (ms "top", ms $ show (y*100) ++ "px"),
+          (ms "left", ms $ show (x*100) ++ "px")
+        ])]
     []
-viewTile (TransitionTile n (x,y)) =
+viewTile ((TransitionTile n (x,y)),posX,posY) =
   div_
     [ style_ $
         fromList
           ([ (ms "background", ms $ getTileColor n),
             (ms "color", ms $ getTextColor n)]
             ++tileStyle
+            ++[ (ms "position", ms "absolute"),
+          (ms "top", ms $ show (posX*100) ++ "px"),
+          (ms "left", ms $ show (posY*100) ++ "px")]
             ++getTransition x y)
     ]
     [text $ ms (show n)]
 
 getTransition :: Int -> Int  -> [(MisoString, MisoString)]
-getTransition x y  | x == 0 && y == 0 = []
-                  | otherwise = [
-                    (ms "transition", ms "transform 0.5s ease"),
+getTransition x y  
+                   = [
+                    (ms "transition", ms "transform 0.3s ease"),
                     (ms "transform", ms $ "translate(" ++ show (fromIntegral x*102.7) ++ "px," ++ show (y*100) ++ "px)")
-                  ] 
+                  ]
 
 tileCanvas :: View Action
 tileCanvas =

@@ -7,12 +7,15 @@ import Constants (initialScore, size, tilesAmount, twoPercentChance)
 import Data.List (partition)
 import GHC.IO (unsafePerformIO)
 import Game (Action (..), Board(..),VisualBoard(..), TransitionTile (..), GameState (..), Model (..), Tile (..), emptyBoard)
-import Miso (Effect, noEff)
+import Miso (Effect, noEff,clearBody)
 import Miso.Subscription.Keyboard (Arrows (..))
 import Utils (chop, getRandomInt, getValueOfVectorIndex, transpose)
 import Transition (transition, initTransitionBoard,findNewTiles)
 
+import Miso.Effect
+
 updateModel :: Action -> Model -> Effect Action Model
+updateModel NoOp model = noEff model
 updateModel Initialize Model {..} = noEff Model {board =initialBoard,visualBoard = VisualBoard{transitionBoard =  initTransitionBoard initialBoard, newTiles = emptyBoard Empty},..}
                           where initialBoard = initBoard board
 updateModel Restart Model {..} =
@@ -20,9 +23,8 @@ updateModel Restart Model {..} =
   where
     bestScore' = max score bestScore
 updateModel (ArrowPress Arrows {..}) Model {..} =
-  noEff model
+   noEff model
   where
-    
     board' = move (arrowX, arrowY) board
     board'' = collision board' (arrowX, arrowY)
     board''' = fst board''

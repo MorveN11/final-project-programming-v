@@ -94,6 +94,30 @@ moveBoard1Left = property $ transition gridBoard1 gridDesplaced1Left (-1,0) === 
                                                                               [TransitionTileEmpty,TransitionTileEmpty, TransitionTileEmpty, TransitionTile 8 (-3,0)],
                                                                               [TransitionTileEmpty,TransitionTileEmpty,TransitionTile 2 (-2,0),TransitionTile 4 (-2,0)]]
 
+
+
+gridBoard2 :: Board
+gridBoard2  =  [ [Empty,Tile 2,Empty,Empty],
+                [Empty,Empty,Empty,Empty],
+                [Tile 8,Empty,Empty,Empty],
+                [Tile 8,Tile 2,Empty,Empty]]
+
+
+gridDesplaced2Up :: Board
+gridDesplaced2Up =
+              [ [Tile 16,Tile 4,Empty,Empty],
+                [Empty,Empty,Empty,Empty],
+                [Empty,Empty,Empty,Empty],
+                [Empty,Empty,Empty,Empty]]
+
+
+moveBoard2Up :: Property
+moveBoard2Up = property $ transition gridBoard2 gridDesplaced2Up (0,1) === [[TransitionTileEmpty,TransitionTile 2 (0,0), TransitionTileEmpty, TransitionTileEmpty],
+                                                                              [TransitionTileEmpty,TransitionTileEmpty,TransitionTileEmpty, TransitionTileEmpty],
+                                                                              [TransitionTile 8 (0,-2),TransitionTileEmpty, TransitionTileEmpty, TransitionTileEmpty],
+                                                                              [TransitionTile 8 (0,-3),TransitionTile 2 (0,-3),TransitionTileEmpty,TransitionTileEmpty]]
+
+
 initialBoard :: Board
 initialBoard =  [ [Empty,Tile 2,Tile 3,Tile 2],
                   [Empty,Empty,Empty,Empty],
@@ -114,5 +138,6 @@ transitionsTest  = [ quickCheck moveListLeft,
                      quickCheck moveBoardLeft,
                      quickCheck moveBoardUp,
                      quickCheck initialBoardParserTest,
-                     quickCheck moveBoard1Left
+                     quickCheck moveBoard1Left,
+                     quickCheck moveBoard2Up
                      ]
