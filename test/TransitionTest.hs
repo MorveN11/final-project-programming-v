@@ -1,11 +1,9 @@
 module TransitionTest (transitionsTest) where 
 
-import Game (Board, Tile (Empty, Tile))
-import Logic (addRandomTile, getIndexOfEmpties)
 import Test.QuickCheck (Property, property, quickCheck, (===))
 
 import Transition (transition,calculateDesplacement',calculateDesplacement, initTransitionBoard,IndexedTile)
-import Game (Board,VisualBoard(..),TransitionTile (..), Tile (Empty, Tile))
+import Game (Board,TransitionTile (..), Tile (..))
 
 
 

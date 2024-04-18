@@ -3,9 +3,8 @@
 
 
 module Transition (transition,initTransitionBoard,calculateDesplacement',  calculateDesplacement,findNewTiles,findNewTiles',IndexedTile) where
-import Constants (size)
-import Utils (chop)
-import Game (Board,TransitionTile (..), Tile (..), TransitionBoard)
+
+import Game (Board,TransitionTile (..), Tile (..))
 
 import Data.List (transpose)
 

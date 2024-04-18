@@ -1,4 +1,6 @@
 {-# LANGUAGE RecordWildCards #-}
+{-# OPTIONS_GHC -Wno-unrecognised-pragmas #-}
+{-# HLINT ignore "Missing NOINLINE pragma" #-}
 
 module Logic (updateModel, getIndexOfEmpties, addRandomTile) where
 
@@ -6,7 +8,7 @@ import Collision (collision)
 import Constants (initialScore, size, tilesAmount, twoPercentChance)
 import Data.List (partition)
 import GHC.IO (unsafePerformIO)
-import Game (Action (..), Board(..),VisualBoard(..), TransitionTile (..), GameState (..), Model (..), Tile (..), emptyBoard)
+import Game (Action (..), Board,VisualBoard(..), TransitionTile (..), GameState (..), Model (..), Tile (..), emptyBoard)
 import Miso (Effect, noEff)
 import Miso.Subscription.Keyboard (Arrows (..))
 import Utils (chop, getRandomInt, getValueOfVectorIndex, transpose)
@@ -19,8 +21,9 @@ updateModel Restart Model {..} =
   updateModel Initialize Model {board = emptyBoard Empty,visualBoard = VisualBoard{transitionBoard =  emptyBoard TransitionTileEmpty, newTiles = emptyBoard Empty}, score = initialScore, bestScore = bestScore', gameState = InProgress}
   where
     bestScore' = max score bestScore
-updateModel (ArrowPress Arrows {..}) Model {..} =
-  noEff model
+updateModel (ArrowPress Arrows {..}) Model {..} = 
+  if arrowX == arrowY then noEff Model{ visualBoard = VisualBoard{transitionBoard =  initTransitionBoard board, newTiles = emptyBoard Empty},..}
+  else noEff model
   where
     
     board' = move (arrowX, arrowY) board
@@ -37,7 +40,7 @@ updateModel (ArrowPress Arrows {..}) Model {..} =
         transitionBoard = transition board board''' (arrowX, arrowY), newTiles = if arrowX == 0 then  updateTile (transpose (findNewTiles (transpose board') (transpose board'''))) index value
                                                                                                 else updateTile (findNewTiles board' board''') index value
       } ,score = score', ..}
-      | otherwise = Model {board = board''', score = score', gameState = gameState', ..}
+      | otherwise = Model {board = board''', score = score', gameState = gameState', visualBoard = VisualBoard{transitionBoard =  initTransitionBoard board, newTiles = emptyBoard Empty},..}
 
 checkGameState :: Board -> GameState
 checkGameState board

@@ -9,7 +9,7 @@ import Miso.String (ms,MisoString)
 
 
 viewModel :: Model -> View Action
-viewModel m@(Model {..}) =
+viewModel (Model {..}) =
   div_
     [ style_ $
         fromList
@@ -22,7 +22,7 @@ viewModel m@(Model {..}) =
           ]
     ]
     [ link_ [ rel_ (ms "stylesheet")
-                 , href_ (ms "/home/fundacion/Documents/SEMESTER5/PROGRA/HASKELL/progra4/miso/learning/final-project-programming-v/static/style.css") ] ,
+                 , href_ (ms "/home/fundacion/progra4/miso/learning/final/final-final/final-project-programming-v/static/style.css") ] ,
       div_
         [ style_ $
             fromList
@@ -200,6 +200,7 @@ viewOverlay color message =
     [ style_ $
         fromList
           [ (ms "position", ms "absolute"),
+            (ms "z-index", ms "100"),
             (ms "top", ms "0"),
             (ms "left", ms "0"),
             (ms "width", ms "100%"),
@@ -255,10 +256,8 @@ viewNewTiles (Tile n) = div_
             (ms "align-items", ms "center"),
             (ms "font-weight", ms "bold"),
             (ms "position", ms "absolute"),
-            (ms "top", ms "0"),
-            (ms "left", ms "0"),
-            (ms "right", ms "0"),
-            (ms "bottom", ms "0"),
+            (ms "top", ms "44"),
+            (ms "left", ms "45"),
             (ms "z-index", ms "40")
             ]
     ]
@@ -272,21 +271,18 @@ viewTile TransitionTileEmpty =  div_
     []
 viewTile (TransitionTile n (x,y)) =
   div_
-    [ style_ $
+    [ class_ (getTransitionClass x y)
+      ,style_ $
         fromList
           ([ (ms "background", ms $ getTileColor n),
             (ms "color", ms $ getTextColor n)]
-            ++tileStyle
-            ++getTransition x y)
-    ]
+            ++tileStyle)]
     [text $ ms (show n)]
 
-getTransition :: Int -> Int  -> [(MisoString, MisoString)]
-getTransition x y  | x == 0 && y == 0 = []
-                  | otherwise = [
-                    (ms "transition", ms "transform 0.5s ease"),
-                    (ms "transform", ms $ "translate(" ++ show (fromIntegral x*102.7) ++ "px," ++ show (y*100) ++ "px)")
-                  ] 
+getTransitionClass :: Int -> Int  -> MisoString
+getTransitionClass x y  |  x == 0 && y == 0  = ms "tst-no-move"
+                        | x == 0 && y /= 0 = ms ("tst-move-y-" ++ show y)
+                        | otherwise = ms ("tst-move-x-" ++ show x)
 
 tileCanvas :: View Action
 tileCanvas =
