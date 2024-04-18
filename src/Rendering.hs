@@ -4,7 +4,7 @@ module Rendering (viewModel) where
 
 import Data.Map (fromList)
 import Game (Action (..), GameState (..), Model (..), Tile (..),TransitionTile (..), VisualBoard (..))
-import Miso (View, button_, div_, h1_, onClick, p_, span_, style_, text,link_, href_, rel_,class_)
+import Miso (View, button_, div_, h1_, onClick, p_, span_, style_, text,class_)
 import Miso.String (ms,MisoString)
 
 
@@ -21,8 +21,7 @@ viewModel (Model {..}) =
             (ms "font-family", ms "Arial, sans-serif")
           ]
     ]
-    [ link_ [ rel_ (ms "stylesheet")
-                 , href_ (ms "/home/fundacion/progra4/miso/learning/final/final-final/final-project-programming-v/static/style.css") ] ,
+    [
       div_
         [ style_ $
             fromList
