@@ -1,9 +1,6 @@
 {-# LANGUAGE RecordWildCards #-}
-{-# OPTIONS_GHC -Wno-unrecognised-pragmas #-}
 
-{-# HLINT ignore "Missing NOINLINE pragma" #-}
-
-module Logic (updateModel, getIndexOfEmpties, addRandomTile) where
+module Logic (updateModel, getIndexOfEmpties, addRandomTile, findAvailableTileIndex) where
 
 import Collision (collision)
 import Constants (initialScore, size, tilesAmount, twoPercentChance)
@@ -32,7 +29,9 @@ updateModel (ArrowPress Arrows {..}) Model {..} =
     board'' = collision board' (arrowX, arrowY)
     board''' = fst board''
     index = findAvailableTileIndex board'''
-    value = generateRandomValue
+    newTile = addRandomTile index board'''
+    board'''' = fst newTile
+    value = snd newTile
     calculateScore = snd board''
     gameState' = checkGameState board'''
     score' = score + calculateScore
@@ -40,7 +39,7 @@ updateModel (ArrowPress Arrows {..}) Model {..} =
       | gameState /= InProgress || board == board''' = Model {gameState = gameState', ..}
       | board /= board''' && gameState' == InProgress =
           Model
-            { board = updateTile board''' index value,
+            { board = board'''',
               visualBoard =
                 VisualBoard
                   { transitionBoard = transition board board''' (arrowX, arrowY),
@@ -69,22 +68,20 @@ canMergeRow _ = False
 
 initBoard :: Board -> Board
 initBoard board
-  | length (getIndexOfEmpties board) == tilesAmount = initBoard (addRandomTile board)
-  | otherwise = addRandomTile board
+  | length (getIndexOfEmpties board) == tilesAmount = initBoard board'
+  | otherwise = board'
+  where
+    index = findAvailableTileIndex board
+    board' = fst (addRandomTile index board)
 
 getIndexOfEmpties :: Board -> [Int]
 getIndexOfEmpties grid = [i | (i, x) <- zip [0 ..] (concat grid), x == Empty]
 
-addRandomTile :: Board -> Board
-addRandomTile board = updateTile board index value
-  where
-    value = generateRandomValue
-    index = findAvailableTileIndex board
-
-generateRandomValue :: Int
-generateRandomValue = unsafePerformIO $ do
+addRandomTile :: Int -> Board -> (Board, Int)
+addRandomTile index board = unsafePerformIO $ do
   probability <- getRandomInt (1, 10)
-  return $ if probability <= twoPercentChance then 2 else 4
+  let value = if probability <= twoPercentChance then 2 else 4
+  return (updateTile board index value, value)
 
 findAvailableTileIndex :: Board -> Int
 findAvailableTileIndex grid = unsafePerformIO $ do

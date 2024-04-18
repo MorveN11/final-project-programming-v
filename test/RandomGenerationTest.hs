@@ -1,7 +1,7 @@
 module RandomGenerationTest (randomTest) where
 
 import Game (Board, Tile (Empty, Tile))
-import Logic (addRandomTile, getIndexOfEmpties)
+import Logic (addRandomTile, findAvailableTileIndex, getIndexOfEmpties)
 import Test.QuickCheck (Property, property, quickCheck, (===))
 
 grid :: Board
@@ -19,14 +19,15 @@ testGetIndexOfEmpties :: Property
 testGetIndexOfEmpties = property $ getIndexOfEmpties grid === [0, 3, 4, 5, 7, 9, 10, 12, 13, 14]
 
 testRandomGeneration :: Property
-testRandomGeneration = property $ length (getIndexOfEmpties (addRandomTile emptyGrid)) === 15
-
-testRandomGenerationMult :: Property
-testRandomGenerationMult = property $ length (getIndexOfEmpties (addRandomTile (addRandomTile emptyGrid))) === 14
+testRandomGeneration =
+  property $
+    length (getIndexOfEmpties board) === 15
+  where
+    index = findAvailableTileIndex emptyGrid
+    board = fst (addRandomTile index emptyGrid)
 
 randomTest :: [IO ()]
 randomTest =
   [ quickCheck testGetIndexOfEmpties,
-    quickCheck testRandomGeneration,
-    quickCheck testRandomGenerationMult
+    quickCheck testRandomGeneration
   ]

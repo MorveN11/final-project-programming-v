@@ -44,12 +44,12 @@ common executable-configuration
 library
   import:          configuration
   exposed-modules:
-    Transition
     Collision
     Constants
     Game
     Logic
     Rendering
+    Transition
     Utils
 
   hs-source-dirs:  src
@@ -67,6 +67,11 @@ executable final-project-programming-v-exe
 test-suite final-project-programming-v-test
   import:         configuration, executable-configuration
   main-is:        Spec.hs
+  other-modules:
+    NewTilesTest
+    RandomGenerationTest
+    TransitionTest
+
   hs-source-dirs: test
   type:           exitcode-stdio-1.0
   build-depends:  QuickCheck
