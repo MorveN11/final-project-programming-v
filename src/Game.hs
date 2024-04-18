@@ -1,6 +1,6 @@
 {-# LANGUAGE InstanceSigs #-}
 
-module Game (Tile (..), Board, Model (..), Action (..), GameState (..),VisualBoard(..), TransitionBoard,TransitionTile(..), initialModel, gameSubs, emptyBoard) where
+module Game (Tile (..), Board, Model (..), Action (..), GameState (..), VisualBoard (..), TransitionBoard, TransitionTile (..), initialModel, gameSubs, emptyBoard) where
 
 import Constants (aKey, dKey, down, initialBestScore, initialScore, left, right, sKey, size, up, wKey)
 import Miso.Subscription.Keyboard (Arrows (..), directionSub)
@@ -17,16 +17,16 @@ data TransitionTile
   deriving (Show, Eq)
 
 type TransitionBoard = [[TransitionTile]]
+
 data GameState = InProgress | Win | GameOver
   deriving (Show, Eq)
 
 type Board = [[Tile]]
 
-data VisualBoard  =  VisualBoard {
-                      transitionBoard :: TransitionBoard,
-                      newTiles :: Board
-                      } 
-              
+data VisualBoard = VisualBoard
+  { transitionBoard :: TransitionBoard,
+    newTiles :: Board
+  }
 
 data Model = Model
   { board :: Board,
@@ -63,13 +63,12 @@ demoBoardWin =
 emptyBoard :: a -> [[a]]
 emptyBoard a = replicate size $ replicate size a
 
-initialVisualBoard ::  VisualBoard
-initialVisualBoard  = VisualBoard {transitionBoard = emptyBoard TransitionTileEmpty, newTiles = emptyBoard Empty}
+initialVisualBoard :: VisualBoard
+initialVisualBoard = VisualBoard {transitionBoard = emptyBoard TransitionTileEmpty, newTiles = emptyBoard Empty}
 
 initialModel :: Model
 initialModel =
   Model
-
     { board = emptyBoard Empty,
       visualBoard = initialVisualBoard,
       score = initialScore,
