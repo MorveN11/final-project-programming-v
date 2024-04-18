@@ -10,7 +10,7 @@ initialBestScore :: Int
 initialBestScore = 0
 
 twoPercentChance :: Int
-twoPercentChance = 6
+twoPercentChance = 8
 
 tilesAmount :: Int
 tilesAmount = size * size

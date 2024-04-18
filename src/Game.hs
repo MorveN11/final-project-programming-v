@@ -1,6 +1,6 @@
 {-# LANGUAGE InstanceSigs #-}
 
-module Game (Tile (..), Board, Model (..), Action (..), GameState (..), initialModel, gameSubs, emptyBoard) where
+module Game (Tile (..), Board, Model (..), Action (..), GameState (..), VisualBoard (..), TransitionBoard, TransitionTile (..), initialModel, gameSubs, emptyBoard) where
 
 import Constants (aKey, dKey, down, initialBestScore, initialScore, left, right, sKey, size, up, wKey)
 import Miso.Subscription.Keyboard (Arrows (..), directionSub)
@@ -11,13 +11,26 @@ data Tile
   | Tile Int
   deriving (Show, Eq)
 
+data TransitionTile
+  = TransitionTile Int (Int, Int)
+  | TransitionTileEmpty
+  deriving (Show, Eq)
+
+type TransitionBoard = [[TransitionTile]]
+
 data GameState = InProgress | Win | GameOver
   deriving (Show, Eq)
 
 type Board = [[Tile]]
 
+data VisualBoard = VisualBoard
+  { transitionBoard :: TransitionBoard,
+    newTiles :: Board
+  }
+
 data Model = Model
   { board :: Board,
+    visualBoard :: VisualBoard,
     score :: Int,
     bestScore :: Int,
     gameState :: GameState
@@ -25,7 +38,7 @@ data Model = Model
 
 instance Eq Model where
   (==) :: Model -> Model -> Bool
-  (Model board1 score1 bestScore1 gameState1) == (Model board2 score2 bestScore2 gameState2) =
+  (Model board1 _ score1 bestScore1 gameState1) == (Model board2 _ score2 bestScore2 gameState2) =
     board1 == board2 && score1 == score2 && bestScore1 == bestScore2 && gameState1 == gameState2
 
 data Action
@@ -47,13 +60,17 @@ demoBoardWin =
   ]
 -}
 
-emptyBoard :: Board
-emptyBoard = replicate size $ replicate size Empty
+emptyBoard :: a -> [[a]]
+emptyBoard a = replicate size $ replicate size a
+
+initialVisualBoard :: VisualBoard
+initialVisualBoard = VisualBoard {transitionBoard = emptyBoard TransitionTileEmpty, newTiles = emptyBoard Empty}
 
 initialModel :: Model
 initialModel =
   Model
-    { board = emptyBoard,
+    { board = emptyBoard Empty,
+      visualBoard = initialVisualBoard,
       score = initialScore,
       bestScore = initialBestScore,
       gameState = InProgress

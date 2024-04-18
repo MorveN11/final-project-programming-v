@@ -3,12 +3,12 @@
 module Rendering (viewModel) where
 
 import Data.Map (fromList)
-import Game (Action (..), GameState (..), Model (..), Tile (..))
-import Miso (View, button_, div_, h1_, onClick, p_, span_, style_, text)
-import Miso.String (ms)
+import Game (Action (..), GameState (..), Model (..), Tile (..), TransitionTile (..), VisualBoard (..))
+import Miso (View, button_, class_, div_, h1_, onClick, p_, span_, style_, text)
+import Miso.String (MisoString, ms)
 
 viewModel :: Model -> View Action
-viewModel Model {..} =
+viewModel (Model {..}) =
   div_
     [ style_ $
         fromList
@@ -28,19 +28,46 @@ viewModel Model {..} =
                 (ms "border-radius", ms "6px"),
                 (ms "width", ms "400px"),
                 (ms "margin-right", ms "40px"),
-                (ms "position", ms "relative")
+                (ms "position", ms "relative"),
+                (ms "overflow", ms "hidden")
               ]
         ]
         [ div_
             [ style_ $
                 fromList
-                  [ (ms "display", ms "grid"),
-                    (ms "grid-template-columns", ms "repeat(4, 1fr)"),
-                    (ms "border-color", ms "#7C6C64"),
-                    (ms "grid-gap", ms "10px")
-                  ]
+                  ( [ (ms "z-index", ms "3"),
+                      (ms "position", ms "sticky")
+                    ]
+                      ++ gridStyle
+                  )
             ]
-            (map viewTile (concat board)),
+            (map viewTile (concat (transitionBoard visualBoard))),
+          div_
+            [ style_ $
+                fromList
+                  ( gridStyle
+                      ++ [ (ms "z-index", ms "2"),
+                           (ms "position", ms "absolute"),
+                           (ms "top", ms "10px"),
+                           (ms "left", ms "10px"),
+                           (ms "width", ms "400px")
+                         ]
+                  )
+            ]
+            (replicate 16 tileCanvas),
+          div_
+            [ style_ $
+                fromList
+                  ( gridStyle
+                      ++ [ (ms "z-index", ms "4"),
+                           (ms "position", ms "absolute"),
+                           (ms "top", ms "10px"),
+                           (ms "left", ms "10px"),
+                           (ms "width", ms "400px")
+                         ]
+                  )
+            ]
+            (map viewNewTiles (concat (newTiles visualBoard))),
           case gameState of
             Win -> viewOverlay "074003" "WIN :D"
             GameOver -> viewOverlay "C93716" "GAME OVER"
@@ -179,6 +206,7 @@ viewOverlay color message =
     [ style_ $
         fromList
           [ (ms "position", ms "absolute"),
+            (ms "z-index", ms "100"),
             (ms "top", ms "0"),
             (ms "left", ms "0"),
             (ms "width", ms "100%"),
@@ -201,38 +229,106 @@ viewOverlay color message =
         [text $ ms message]
     ]
 
-viewTile :: Tile -> View Action
-viewTile Empty =
+viewNewTiles :: Tile -> View Action
+viewNewTiles Empty =
   div_
     [ style_ $
-        fromList
-          [ (ms "background", ms "#cdc1b4"),
-            (ms "border-radius", ms "3px"),
-            (ms "width", ms "90px"),
-            (ms "height", ms "90px"),
-            (ms "display", ms "flex"),
-            (ms "justify-content", ms "center"),
-            (ms "align-items", ms "center")
-          ]
+        fromList tileStyle
     ]
     []
-viewTile (Tile n) =
+viewNewTiles (Tile n) =
   div_
     [ style_ $
         fromList
-          [ (ms "background", ms $ getTileColor n),
-            (ms "color", ms $ getTextColor n),
-            (ms "border-radius", ms "3px"),
-            (ms "width", ms "90px"),
-            (ms "height", ms "90px"),
-            (ms "display", ms "flex"),
-            (ms "justify-content", ms "center"),
-            (ms "align-items", ms "center"),
-            (ms "font-size", ms "30px"),
-            (ms "font-weight", ms "bold")
-          ]
+          ( tileStyle
+              ++ [ (ms "color", ms $ getTextColor n),
+                   (ms "position", ms "relative")
+                 ]
+          )
+    ]
+    [ span_
+        [ class_ (ms "new-tile-number"),
+          style_ $
+            fromList
+              [ (ms "font-size", ms "1px"),
+                (ms "z-index", ms "50")
+              ]
+        ]
+        [text (ms (show n))],
+      div_
+        [ class_ (ms "new-tile-added"),
+          style_ $
+            fromList
+              [ (ms "background", ms $ getTileColor n),
+                (ms "border-radius", ms "0.03px"),
+                (ms "width", ms "1px"),
+                (ms "height", ms "1px"),
+                (ms "display", ms "flex"),
+                (ms "justify-content", ms "center"),
+                (ms "align-items", ms "center"),
+                (ms "font-weight", ms "bold"),
+                (ms "position", ms "absolute"),
+                (ms "top", ms "44"),
+                (ms "left", ms "45"),
+                (ms "z-index", ms "40")
+              ]
+        ]
+        []
+    ]
+
+viewTile :: TransitionTile -> View Action
+viewTile TransitionTileEmpty =
+  div_
+    [ style_ $
+        fromList tileStyle
+    ]
+    []
+viewTile (TransitionTile n (x, y)) =
+  div_
+    [ class_ (getTransitionClass x y),
+      style_ $
+        fromList
+          ( [ (ms "background", ms $ getTileColor n),
+              (ms "color", ms $ getTextColor n)
+            ]
+              ++ tileStyle
+          )
     ]
     [text $ ms (show n)]
+
+getTransitionClass :: Int -> Int -> MisoString
+getTransitionClass x y
+  | x == 0 && y == 0 = ms "tst-no-move"
+  | x == 0 && y /= 0 = ms ("tst-move-y-" ++ show y)
+  | otherwise = ms ("tst-move-x-" ++ show x)
+
+tileCanvas :: View Action
+tileCanvas =
+  div_
+    [ style_ $
+        fromList ((ms "background", ms "#cdc1b4") : tileStyle)
+    ]
+    []
+
+tileStyle :: [(MisoString, MisoString)]
+tileStyle =
+  [ (ms "border-radius", ms "3px"),
+    (ms "width", ms "90px"),
+    (ms "height", ms "90px"),
+    (ms "display", ms "flex"),
+    (ms "justify-content", ms "center"),
+    (ms "align-items", ms "center"),
+    (ms "font-size", ms "30px"),
+    (ms "font-weight", ms "bold")
+  ]
+
+gridStyle :: [(MisoString, MisoString)]
+gridStyle =
+  [ (ms "display", ms "grid"),
+    (ms "grid-template-columns", ms "repeat(4, 1fr)"),
+    (ms "border-color", ms "#7C6C64"),
+    (ms "grid-gap", ms "10px")
+  ]
 
 getTileColor :: Int -> String
 getTileColor n = case n of
