@@ -1,5 +1,6 @@
 body {
   overflow: hidden;
+  min-width:760px;
 }
 
 $vertical-grid-space: 10;
@@ -10,15 +11,18 @@ $speed-transition: .2s;
 
 @keyframes scaleTileAnimation {
   0% {
-    transform: scale(0);
+    width:1px;
+    height:1px;
   }
 
   70% {
-    transform: scale(95);
+    width:96px;
+    height:96px;
   }
 
   100% {
-    transform: scale(91);
+    width:90px;
+    height:90px;
   }
 }
 
