@@ -51,7 +51,21 @@ updateModel (ArrowPress Arrows {..}) Model {..} =
               score = score',
               ..
             }
-      | otherwise = Model {board = board''', score = score', gameState = gameState', visualBoard = VisualBoard {transitionBoard = initTransitionBoard board, newTiles = emptyBoard Empty}, ..}
+      | otherwise =
+          Model
+            { board = board''',
+              score = score',
+              gameState = gameState',
+              visualBoard =
+                VisualBoard
+                  { transitionBoard = transition board board''' (arrowX, arrowY),
+                    newTiles =
+                      if arrowX == 0
+                        then updateTile (transpose (findNewTiles (transpose board') (transpose board'''))) index value
+                        else updateTile (findNewTiles board' board''') index value
+                  },
+              ..
+            }
 
 checkGameState :: Board -> GameState
 checkGameState board
